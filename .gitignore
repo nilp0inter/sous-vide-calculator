@@ -1,0 +1,21 @@
+# Node modules
+node_modules
+
+# Elm artifacts
+elm-stuff
+
+# Build output
+dist
+
+# Environment variables
+.env
+.env.local
+
+# Editor directories and files
+.idea
+.vscode
+*.swp
+.DS_Store
+
+# Nix direnv
+.direnv
