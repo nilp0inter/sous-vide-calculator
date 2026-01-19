@@ -3,6 +3,8 @@ module Calculators.Pasteurization exposing (Model, Msg, init, update, view)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Slider
+import Round
 
 
 -- MODEL
@@ -17,8 +19,8 @@ type Protein
 type alias Model =
     {
         protein : Protein
-    , thicknessInput : String
-    , tempInput : String
+    , thicknessInput : Float
+    , tempInput : Float
     , isAcidicMarinade : Bool
     }
 
@@ -27,16 +29,16 @@ init : Model
 init =
     {
         protein = Meat
-    , thicknessInput = "25"
-    , tempInput = "58"
+    , thicknessInput = 25.0
+    , tempInput = 58.0
     , isAcidicMarinade = False
     }
 
 
 type Msg
     = SetProtein Protein
-    | SetThickness String
-    | SetTemp String
+    | SetThickness Float
+    | SetTemp Float
     | ToggleAcidicMarinade
 
 
@@ -66,48 +68,19 @@ getPasteurizationTime : Protein -> Float -> Float -> Maybe Float
 getPasteurizationTime protein thickness temp =
     let
         -- Safety Rule: Round thickness UP to the nearest 5mm step in the table
-        safeThickness =
-            if thickness <= 5 then 5
-            else if thickness <= 10 then 10
-            else if thickness <= 15 then 15
-            else if thickness <= 20 then 20
-            else if thickness <= 25 then 25
-            else if thickness <= 30 then 30
-            else if thickness <= 35 then 35
-            else if thickness <= 40 then 40
-            else if thickness <= 45 then 45
-            else if thickness <= 50 then 50
-            else if thickness <= 55 then 55
-            else if thickness <= 60 then 60
-            else if thickness <= 65 then 65
-            else if thickness <= 70 then 70
-            else 999 -- Too thick
+        -- Slider ensures valid input, but keep logic safe
+        safeThickness = round thickness
 
         -- Safety Rule: Round temperature DOWN to the nearest available column
-        -- (because lower temp = longer time required, so rounding down is safer)
-        table =
-            case protein of
-                LeanFish -> leanFishTable
-                FattyFish -> fattyFishTable
-                Poultry -> poultryTable
-                Meat -> meatTable
+        table = getTable protein
 
         findTimeForThickness tList =
             tList
-                |> List.filter (\(t, _) -> t == safeThickness)
+                |> List.filter (\(t, _) -> t == toFloat safeThickness)
                 |> List.head
                 |> Maybe.andThen (\(_, tempMap) -> findTimeForTemp tempMap)
 
         findTimeForTemp tempMap =
-            -- tempMap is sorted descending by temp usually, or we just filter
-            -- We want the highest temp key that is <= our input temp.
-            -- Actually, simpler: List.filter (key <= input) -> take max of those keys?
-            -- Since our table rows are (Temp, Time), and we want to match the
-            -- explicit columns.
-            -- Example: Input 55.5. Keys: 55, 56.
-            -- 55.5 is hotter than 55. So 55's time is safe.
-            -- 55.5 is colder than 56. So 56's time is UNSAFE (too short).
-            -- So we look for the key that is <= input. The largest such key.
             tempMap
                 |> List.filter (\(t, _) -> t <= temp)
                 |> List.sortBy (\(t, _) -> t)
@@ -120,6 +93,14 @@ getPasteurizationTime protein thickness temp =
 
 type alias TableRow = (Float, Float) -- (Temp, Minutes)
 type alias TableData = List (Float, List TableRow) -- (Thickness, Row)
+
+getTable : Protein -> TableData
+getTable protein =
+    case protein of
+        LeanFish -> leanFishTable
+        FattyFish -> fattyFishTable
+        Poultry -> poultryTable
+        Meat -> meatTable
 
 
 -- Table 3.1: Lean Fish
@@ -207,8 +188,8 @@ meatTable =
 -- VIEW
 
 
-view : Bool -> Model -> Html Msg
-view isMetric model =
+view : Model -> Html Msg
+view model =
     div [ class "max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm" ]
         [ h2 [ class "text-2xl font-bold mb-6 text-gray-800 border-b pb-2" ]
             [ text "Pasteurization Calculator" ]
@@ -217,15 +198,15 @@ view isMetric model =
             [ -- Input Section
               div [ class "space-y-6" ]
                 [ viewProteinSelector model.protein
-                , viewInput isMetric "Thickness" model.thicknessInput SetThickness
-                , viewInputTemp isMetric "Bath Temperature" model.tempInput SetTemp
+                , viewThicknessSlider model
+                , viewTempSlider model
                 , viewMarinadeToggle model.isAcidicMarinade
                 ]
             
             -- Result Section
             , div [ class "bg-blue-50 rounded-lg p-6 flex flex-col justify-center items-center text-center" ]
                 [ h3 [ class "text-lg font-medium text-blue-800 mb-2" ] [ text "Minimum Time" ]
-                , viewResult isMetric model
+                , viewResult model
                 ]
             ]
         ]
@@ -263,56 +244,57 @@ proteinButton labelStr protein selected =
         [ text labelStr ]
 
 
-viewInput : Bool -> String -> String -> (String -> Msg) -> Html Msg
-viewInput isMetric labelStr valueStr msg =
+viewThicknessSlider : Model -> Html Msg
+viewThicknessSlider model =
     let
-        unit = if isMetric then "mm" else "in"
-        placeholderStr = if isMetric then "e.g., 25" else "e.g., 1.0"
+        table = getTable model.protein
+        thicknesses = List.map Tuple.first table |> List.sort
+        
+        formatter val =
+            let
+                mm = String.fromFloat val ++ " mm"
+                inch = Round.round 2 (val / 25.4) ++ " in"
+            in
+            mm ++ " / " ++ inch
     in
-    div []
-        [ label [ class "block text-sm font-medium text-gray-700 mb-1" ] [ text (labelStr ++ " (" ++ unit ++ ")") ]
-        , div [ class "relative rounded-md shadow-sm" ]
-            [
-                input
-                    [
-                        type_ "number"
-                    , class "focus:ring-blue-500 focus:border-blue-500 block w-full pr-12 sm:text-sm border-gray-300 rounded-md p-2 border"
-                    , placeholder placeholderStr
-                    , value valueStr
-                    , onInput msg
-                    , step "any"
-                    ]
-                    []
-            , div [ class "absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none" ]
-                [ span [ class "text-gray-500 sm:text-sm" ] [ text unit ] ]
-            ]
-        ]
+    Slider.view
+        { value = model.thicknessInput
+        , allowedValues = thicknesses
+        , toMsg = SetThickness
+        , label = "Thickness"
+        , formatter = formatter
+        }
 
 
-viewInputTemp : Bool -> String -> String -> (String -> Msg) -> Html Msg
-viewInputTemp isMetric labelStr valueStr msg =
+viewTempSlider : Model -> Html Msg
+viewTempSlider model =
     let
-        unit = if isMetric then "°C" else "°F"
-        placeholderStr = if isMetric then "e.g., 58" else "e.g., 136"
+        table = getTable model.protein
+        
+        -- Extract valid temperatures from the first row (assuming all rows have same temp cols)
+        -- The inner list is [(Temp, Time), ...]
+        validTemps = 
+            table 
+                |> List.head 
+                |> Maybe.map Tuple.second 
+                |> Maybe.withDefault []
+                |> List.map Tuple.first
+                |> List.sort
+
+        formatter val =
+            let
+                c = String.fromFloat val ++ " °C"
+                f = Round.round 1 ((val * 9/5) + 32) ++ " °F"
+            in
+            c ++ " / " ++ f
     in
-    div []
-        [ label [ class "block text-sm font-medium text-gray-700 mb-1" ] [ text (labelStr ++ " (" ++ unit ++ ")") ]
-        , div [ class "relative rounded-md shadow-sm" ]
-            [
-                input
-                    [
-                        type_ "number"
-                    , class "focus:ring-blue-500 focus:border-blue-500 block w-full pr-12 sm:text-sm border-gray-300 rounded-md p-2 border"
-                    , placeholder placeholderStr
-                    , value valueStr
-                    , onInput msg
-                    , step "any"
-                    ]
-                    []
-            , div [ class "absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none" ]
-                [ span [ class "text-gray-500 sm:text-sm" ] [ text unit ] ]
-            ]
-        ]
+    Slider.view
+        { value = model.tempInput
+        , allowedValues = validTemps
+        , toMsg = SetTemp
+        , label = "Bath Temperature"
+        , formatter = formatter
+        }
 
 
 viewMarinadeToggle : Bool -> Html Msg
@@ -336,27 +318,14 @@ viewMarinadeToggle isAcidic =
         ]
 
 
-viewResult : Bool -> Model -> Html Msg
-viewResult isMetric model =
+viewResult : Model -> Html Msg
+viewResult model =
     let
-        thickness = String.toFloat model.thicknessInput
-        temp = String.toFloat model.tempInput
-        
-        -- Convert to Metric for calculation
-        mmThickness =
-            thickness
-                |> Maybe.map (\t -> if isMetric then t else t * 25.4)
-        
-        cTemp =
-            temp
-                |> Maybe.map (\t -> if isMetric then t else (t - 32) * 5 / 9)
-
         result =
-            Maybe.map2 (getPasteurizationTime model.protein) mmThickness cTemp
-                |> Maybe.andThen identity
+            getPasteurizationTime model.protein model.thicknessInput model.tempInput
     in
-    case (thickness, temp, result) of
-        (Just _, Just _, Just rawMinutes) ->
+    case result of
+        Just rawMinutes ->
             let
                 finalMinutes =
                     if model.isAcidicMarinade then
@@ -381,14 +350,10 @@ viewResult isMetric model =
                     text ""
                 ]
 
-        (Just t, Just _, Nothing) ->
-            let
-                tVal = if isMetric then t else t * 25.4
-            in
-            if tVal > 70 then
+        Nothing ->
+             -- Slider prevents this mostly, but thickness > 70 still possible if we didn't filter logic
+            if model.thicknessInput > 70 then
                  p [ class "text-red-600 font-medium" ] [ text "Thickness exceeds 70mm table limit." ]
             else
                  p [ class "text-amber-600 font-medium" ] [ text "Temperature out of range for this protein." ]
 
-        _ ->
-            p [ class "text-gray-400 italic" ] [ text "Enter valid thickness and temperature..." ]

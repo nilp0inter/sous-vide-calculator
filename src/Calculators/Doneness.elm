@@ -97,8 +97,8 @@ getDonenessLevels protein =
 -- VIEW
 
 
-view : Bool -> Model -> Html Msg
-view isMetric model =
+view : Model -> Html Msg
+view model =
     div [ class "max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm" ]
         [ h2 [ class "text-2xl font-bold mb-6 text-gray-800 border-b pb-2" ]
             [ text "Doneness & Texture Visualizer" ]
@@ -108,7 +108,7 @@ view isMetric model =
             ]
         
         , div [ class "grid grid-cols-1 md:grid-cols-3 gap-6" ]
-            (List.map (viewDonenessCard isMetric) (getDonenessLevels model.protein))
+            (List.map viewDonenessCard (getDonenessLevels model.protein))
         ]
 
 
@@ -142,14 +142,11 @@ proteinButton labelStr protein selected roundedClass =
         [ text labelStr ]
 
 
-viewDonenessCard : Bool -> DonenessLevel -> Html Msg
-viewDonenessCard isMetric level =
+viewDonenessCard : DonenessLevel -> Html Msg
+viewDonenessCard level =
     let
         tempString =
-            if isMetric then
-                String.fromFloat level.tempC ++ "°C"
-            else
-                String.fromInt level.tempF ++ "°F"
+            String.fromFloat level.tempC ++ "°C / " ++ String.fromInt level.tempF ++ "°F"
     in
     div [ class "flex flex-col rounded-lg shadow overflow-hidden border border-gray-200" ]
         [ div [ class ("px-6 py-4 flex-grow flex flex-col items-center justify-center text-center " ++ level.colorClass) ]

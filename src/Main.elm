@@ -29,11 +29,6 @@ main =
 -- MODEL
 
 
-type UnitSystem
-    = Metric
-    | Imperial
-
-
 type Tab
     = Pasteurization
     | Heating
@@ -45,7 +40,6 @@ type Tab
 
 type alias Model =
     { activeTab : Tab
-    , units : UnitSystem
     , heating : Calculators.Heating.Model
     , pasteurization : Calculators.Pasteurization.Model
     , rapidChilling : Calculators.RapidChilling.Model
@@ -58,7 +52,6 @@ type alias Model =
 init : Model
 init =
     { activeTab = Pasteurization
-    , units = Metric
     , heating = Calculators.Heating.init
     , pasteurization = Calculators.Pasteurization.init
     , rapidChilling = Calculators.RapidChilling.init
@@ -74,7 +67,6 @@ init =
 
 type Msg
     = SelectTab Tab
-    | SetUnits UnitSystem
     | HeatingMsg Calculators.Heating.Msg
     | PasteurizationMsg Calculators.Pasteurization.Msg
     | RapidChillingMsg Calculators.RapidChilling.Msg
@@ -88,9 +80,6 @@ update msg model =
     case msg of
         SelectTab tab ->
             { model | activeTab = tab }
-
-        SetUnits units ->
-            { model | units = units }
 
         HeatingMsg subMsg ->
             { model | heating = Calculators.Heating.update subMsg model.heating }
@@ -135,36 +124,8 @@ viewHeader model =
                 , span [ class "ml-3 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 hidden sm:inline-block" ]
                     [ text "Baldwin Model" ]
                 ]
-            , viewUnitToggle model.units
             ]
         ]
-
-
-viewUnitToggle : UnitSystem -> Html Msg
-viewUnitToggle currentUnits =
-    div [ class "flex bg-gray-200 rounded-lg p-1" ]
-        [ unitButton Metric currentUnits "Metric"
-        , unitButton Imperial currentUnits "Imperial"
-        ]
-
-
-unitButton : UnitSystem -> UnitSystem -> String -> Html Msg
-unitButton units currentUnits label =
-    let
-        isActive =
-            units == currentUnits
-
-        activeClasses =
-            if isActive then
-                "bg-white shadow text-gray-900"
-            else
-                "text-gray-500 hover:text-gray-900"
-    in
-    button
-        [ onClick (SetUnits units)
-        , class ("px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 " ++ activeClasses)
-        ]
-        [ text label ]
 
 
 viewTabs : Model -> Html Msg
@@ -207,28 +168,25 @@ tabButton tab currentTab label =
 
 viewContent : Model -> Html Msg
 viewContent model =
-    let
-        isMetric = model.units == Metric
-    in
     main_ [ class "flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8" ]
         [ case model.activeTab of
             Heating ->
-                Html.map HeatingMsg (Calculators.Heating.view isMetric model.heating)
+                Html.map HeatingMsg (Calculators.Heating.view model.heating)
 
             Pasteurization ->
-                Html.map PasteurizationMsg (Calculators.Pasteurization.view isMetric model.pasteurization)
+                Html.map PasteurizationMsg (Calculators.Pasteurization.view model.pasteurization)
 
             RapidChilling ->
-                Html.map RapidChillingMsg (Calculators.RapidChilling.view isMetric model.rapidChilling)
+                Html.map RapidChillingMsg (Calculators.RapidChilling.view model.rapidChilling)
 
             BrineMarinade ->
-                Html.map BrineMarinadeMsg (Calculators.BrineMarinade.view isMetric model.brineMarinade)
+                Html.map BrineMarinadeMsg (Calculators.BrineMarinade.view model.brineMarinade)
 
             Doneness ->
-                Html.map DonenessMsg (Calculators.Doneness.view isMetric model.doneness)
+                Html.map DonenessMsg (Calculators.Doneness.view model.doneness)
 
             ShelfLife ->
-                Html.map ShelfLifeMsg (Calculators.ShelfLife.view isMetric model.shelfLife)
+                Html.map ShelfLifeMsg (Calculators.ShelfLife.view model.shelfLife)
         ]
 
 

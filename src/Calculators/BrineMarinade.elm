@@ -3,6 +3,7 @@ module Calculators.BrineMarinade exposing (Model, Msg, init, update, view)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Round
 
 
 -- MODEL
@@ -12,10 +13,14 @@ type ProteinType
     = PorkPoultry
     | Brisket
 
+type UnitSystem
+    = Metric
+    | Imperial
 
 type alias Model =
     { liquidWeightInput : String
     , proteinType : ProteinType
+    , units : UnitSystem
     }
 
 
@@ -23,12 +28,14 @@ init : Model
 init =
     { liquidWeightInput = "1000" -- Default 1000g or ~35oz
     , proteinType = PorkPoultry
+    , units = Metric
     }
 
 
 type Msg
     = SetLiquidWeight String
     | SetProteinType ProteinType
+    | SetUnits UnitSystem
 
 
 update : Msg -> Model -> Model
@@ -39,6 +46,9 @@ update msg model =
 
         SetProteinType pType ->
             { model | proteinType = pType }
+
+        SetUnits units ->
+            { model | units = units }
 
 
 
@@ -68,12 +78,14 @@ getBrineRatios pType =
             }
 
 
-calculateAmounts : Bool -> Model -> Maybe { saltMin : Float, saltMax : Float, sugar : Float }
-calculateAmounts isMetric model =
+calculateAmounts : Model -> Maybe { saltMin : Float, saltMax : Float, sugar : Float, waterGrams : Float }
+calculateAmounts model =
     String.toFloat model.liquidWeightInput
         |> Maybe.map
             (\inputWeight ->
                 let
+                    isMetric = model.units == Metric
+                    
                     -- Convert input to grams for calculation consistency
                     liquidWeightGrams =
                         if isMetric then
@@ -93,21 +105,10 @@ calculateAmounts isMetric model =
                     sugarGrams =
                         liquidWeightGrams * ratios.sugarRatio
                 in
-                { saltMin =
-                    if isMetric then
-                        saltMinGrams
-                    else
-                        saltMinGrams / 28.3495 -- Convert back to ounces
-                , saltMax =
-                    if isMetric then
-                        saltMaxGrams
-                    else
-                        saltMaxGrams / 28.3495
-                , sugar =
-                    if isMetric then
-                        sugarGrams
-                    else
-                        sugarGrams / 28.3495
+                { saltMin = saltMinGrams
+                , saltMax = saltMaxGrams
+                , sugar = sugarGrams
+                , waterGrams = liquidWeightGrams
                 }
             )
 
@@ -116,8 +117,8 @@ calculateAmounts isMetric model =
 -- VIEW
 
 
-view : Bool -> Model -> Html Msg
-view isMetric model =
+view : Model -> Html Msg
+view model =
     div [ class "max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm" ]
         [ h2 [ class "text-2xl font-bold mb-6 text-gray-800 border-b pb-2" ]
             [ text "Brine & Marinade Ratio Tool" ]
@@ -126,13 +127,14 @@ view isMetric model =
             [ -- Input Section
               div [ class "space-y-6" ]
                 [ viewProteinTypeSelector model.proteinType
-                , viewLiquidWeightInput isMetric model.liquidWeightInput
+                , viewUnitSelector model.units
+                , viewLiquidWeightInput model
                 ]
             
             -- Result Section
             , div [ class "bg-yellow-50 rounded-lg p-6 flex flex-col justify-center items-center text-center" ]
                 [ h3 [ class "text-lg font-medium text-yellow-800 mb-2" ] [ text "Required Amounts" ]
-                , viewResult isMetric model
+                , viewResult model
                 ]
             ]
         ]
@@ -168,11 +170,41 @@ proteinTypeButton labelStr pType selected roundedClass =
         [ text labelStr ]
 
 
-viewLiquidWeightInput : Bool -> String -> Html Msg
-viewLiquidWeightInput isMetric valueStr =
+viewUnitSelector : UnitSystem -> Html Msg
+viewUnitSelector selected =
+    div []
+        [ label [ class "block text-sm font-medium text-gray-700 mb-2" ] [ text "Input Units" ]
+        , div [ class "flex rounded-md shadow-sm max-w-xs" ]
+            [ unitButton "Metric (g)" Metric selected "rounded-l-md"
+            , unitButton "Imperial (oz)" Imperial selected "rounded-r-md"
+            ]
+        ]
+
+
+unitButton : String -> UnitSystem -> UnitSystem -> String -> Html Msg
+unitButton labelStr unit selected roundedClass =
     let
-        unit = if isMetric then "g" else "oz"
-        placeholderStr = if isMetric then "e.g., 1000" else "e.g., 35.27"
+        isSelected = unit == selected
+        baseClasses = "flex-1 px-3 py-1.5 text-xs font-medium border focus:z-10 focus:ring-1 focus:ring-yellow-500"
+        colors =
+            if isSelected then
+                "bg-yellow-100 text-yellow-800 border-yellow-300"
+            else
+                "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+    in
+    button
+        [ type_ "button"
+        , class (baseClasses ++ " " ++ colors ++ " " ++ roundedClass)
+        , onClick (SetUnits unit)
+        ]
+        [ text labelStr ]
+
+
+viewLiquidWeightInput : Model -> Html Msg
+viewLiquidWeightInput model =
+    let
+        unit = if model.units == Metric then "g" else "oz"
+        placeholderStr = if model.units == Metric then "e.g., 1000" else "e.g., 35.27"
     in
     div []
         [ label [ class "block text-sm font-medium text-gray-700 mb-1" ] [ text ("Weight of Water/Liquid (" ++ unit ++ ")") ]
@@ -181,7 +213,7 @@ viewLiquidWeightInput isMetric valueStr =
                 [ type_ "number"
                 , class "focus:ring-yellow-500 focus:border-yellow-500 block w-full pr-12 sm:text-sm border-gray-300 rounded-md p-2 border"
                 , placeholder placeholderStr
-                , value valueStr
+                , value model.liquidWeightInput
                 , onInput SetLiquidWeight
                 , step "any"
                 ]
@@ -192,38 +224,41 @@ viewLiquidWeightInput isMetric valueStr =
         ]
 
 
-viewResult : Bool -> Model -> Html Msg
-viewResult isMetric model =
+viewResult : Model -> Html Msg
+viewResult model =
     let
-        unit = if isMetric then "g" else "oz"
+        formatGrams g = String.fromFloat (round2dp g) ++ " g"
+        formatOz g = String.fromFloat (round2dp (g / 28.3495)) ++ " oz"
         
-        round2dp : Float -> Float
         round2dp number =
             let
                 multiplier = 100.0
                 rounded = round (number * multiplier)
             in
             toFloat rounded / multiplier
-
-        format f = String.fromFloat (round2dp f)
     in
-    case calculateAmounts isMetric model of
+    case calculateAmounts model of
         Just { saltMin, saltMax, sugar } ->
-            div [ class "space-y-3" ]
+            div [ class "space-y-4 text-left inline-block" ]
                 [ if model.proteinType == PorkPoultry then
-                    p [ class "text-gray-900" ]
-                        [ span [ class "font-bold" ] [ text "Salt: " ]
-                        , text (format saltMin ++ unit ++ " to " ++ format saltMax ++ unit)
+                    div []
+                        [ p [ class "font-bold text-gray-900" ] [ text "Salt:" ]
+                        , p [ class "text-gray-800" ] 
+                            [ text (formatGrams saltMin ++ " - " ++ formatGrams saltMax) ]
+                        , p [ class "text-gray-500 text-xs" ] 
+                            [ text (formatOz saltMin ++ " - " ++ formatOz saltMax) ]
                         ]
                   else
-                    p [ class "text-gray-900" ]
-                        [ span [ class "font-bold" ] [ text "Salt: " ]
-                        , text (format saltMin ++ unit)
+                    div []
+                        [ p [ class "font-bold text-gray-900" ] [ text "Salt:" ]
+                        , p [ class "text-gray-800" ] [ text (formatGrams saltMin) ]
+                        , p [ class "text-gray-500 text-xs" ] [ text (formatOz saltMin) ]
                         ]
                 , if sugar > 0 then
-                    p [ class "text-gray-900" ]
-                        [ span [ class "font-bold" ] [ text "Sugar: " ]
-                        , text (format sugar ++ unit)
+                    div []
+                        [ p [ class "font-bold text-gray-900" ] [ text "Sugar:" ]
+                        , p [ class "text-gray-800" ] [ text (formatGrams sugar) ]
+                        , p [ class "text-gray-500 text-xs" ] [ text (formatOz sugar) ]
                         ]
                   else
                     text ""

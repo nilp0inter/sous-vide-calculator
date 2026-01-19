@@ -3,6 +3,8 @@ module Calculators.Heating exposing (Model, Msg, init, update, view)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Slider
+import Round
 
 
 -- MODEL
@@ -20,7 +22,7 @@ type Shape
 type alias Model =
     { startState : StartState
     , shape : Shape
-    , thicknessInput : String
+    , thicknessInput : Float
     }
 
 
@@ -28,14 +30,14 @@ init : Model
 init =
     { startState = Thawed
     , shape = Slab
-    , thicknessInput = "25"
+    , thicknessInput = 25.0
     }
 
 
 type Msg
     = SetStartState StartState
     | SetShape Shape
-    | SetThickness String
+    | SetThickness Float
 
 
 update : Msg -> Model -> Model
@@ -45,11 +47,29 @@ update msg model =
             { model | startState = state }
 
         SetShape shape ->
-            { model | shape = shape }
+            -- If the current thickness is invalid for the new shape, clamp it?
+            -- The slider will handle it by snapping to the nearest valid, 
+            -- but the Model value needs to be valid.
+            -- We'll just let the view filter the options. 
+            -- Ideally we should clamp here, but simpler to just let user adjust.
+            -- Actually, if we switch shape to Slab and thickness is 115, that's invalid.
+            -- Let's clamp it to the new max.
+            let
+                maxT = getMaxThickness shape
+                newThickness = Basics.min model.thicknessInput (toFloat maxT)
+            in
+            { model | shape = shape, thicknessInput = newThickness }
 
         SetThickness val ->
             { model | thicknessInput = val }
 
+
+getMaxThickness : Shape -> Int
+getMaxThickness shape =
+    case shape of
+        Slab -> 65
+        Cylinder -> 95
+        Sphere -> 115
 
 
 -- DATA
@@ -61,42 +81,11 @@ update msg model =
 getHeatingTime : StartState -> Shape -> Float -> Maybe Int
 getHeatingTime state shape thickness =
     let
-        -- Table stops at different points for different shapes
-        maxThickness =
-            case (state, shape) of
-                (Thawed, Slab) -> 65
-                (Thawed, Cylinder) -> 95
-                (Thawed, Sphere) -> 115
-                (Frozen, Slab) -> 65
-                (Frozen, Cylinder) -> 95
-                (Frozen, Sphere) -> 115
+        maxThickness = getMaxThickness shape
 
-        safeThickness =
-            if thickness <= 5 then 5
-            else if thickness <= 10 then 10
-            else if thickness <= 15 then 15
-            else if thickness <= 20 then 20
-            else if thickness <= 25 then 25
-            else if thickness <= 30 then 30
-            else if thickness <= 35 then 35
-            else if thickness <= 40 then 40
-            else if thickness <= 45 then 45
-            else if thickness <= 50 then 50
-            else if thickness <= 55 then 55
-            else if thickness <= 60 then 60
-            else if thickness <= 65 then 65
-            else if thickness <= 70 then 70
-            else if thickness <= 75 then 75
-            else if thickness <= 80 then 80
-            else if thickness <= 85 then 85
-            else if thickness <= 90 then 90
-            else if thickness <= 95 then 95
-            else if thickness <= 100 then 100
-            else if thickness <= 105 then 105
-            else if thickness <= 110 then 110
-            else if thickness <= 115 then 115
-            else 999 -- Too thick
-
+        -- The slider gives us exact table values, but safe to keep this logic
+        safeThickness = round thickness
+        
         table =
             case state of
                 Thawed -> thawedTable
@@ -140,7 +129,7 @@ thawedTable =
     , { thickness = 40, slab = Just 150, cylinder = Just 75, sphere = Just 55 }
     , { thickness = 45, slab = Just 180, cylinder = Just 90, sphere = Just 75 }
     , { thickness = 50, slab = Just 210, cylinder = Just 120, sphere = Just 90 }
-    , { thickness = 55, slab = Just 240, cylinder = Just 135, sphere = Just 90 } -- Note: 90 is correct per text? Table says 1.5hr=90
+    , { thickness = 55, slab = Just 240, cylinder = Just 135, sphere = Just 90 }
     , { thickness = 60, slab = Just 285, cylinder = Just 150, sphere = Just 120 }
     , { thickness = 65, slab = Just 330, cylinder = Just 180, sphere = Just 135 }
     , { thickness = 70, slab = Nothing, cylinder = Just 210, sphere = Just 150 }
@@ -188,8 +177,8 @@ frozenTable =
 -- VIEW
 
 
-view : Bool -> Model -> Html Msg
-view isMetric model =
+view : Model -> Html Msg
+view model =
     div [ class "max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm" ]
         [ h2 [ class "text-2xl font-bold mb-6 text-gray-800 border-b pb-2" ]
             [ text "Heating Time Calculator" ]
@@ -199,13 +188,13 @@ view isMetric model =
               div [ class "space-y-6" ]
                 [ viewStateSelector model.startState
                 , viewShapeSelector model.shape
-                , viewInput isMetric "Thickness" model.thicknessInput SetThickness
+                , viewThicknessSlider model
                 ]
             
             -- Result Section
             , div [ class "bg-indigo-50 rounded-lg p-6 flex flex-col justify-center items-center text-center" ]
                 [ h3 [ class "text-lg font-medium text-indigo-800 mb-2" ] [ text "Time to Reach Temperature" ]
-                , viewResult isMetric model
+                , viewResult model
                 ]
             ]
         ]
@@ -274,44 +263,42 @@ shapeButton labelStr shape selected description =
         ]
 
 
-viewInput : Bool -> String -> String -> (String -> Msg) -> Html Msg
-viewInput isMetric labelStr valueStr msg =
+viewThicknessSlider : Model -> Html Msg
+viewThicknessSlider model =
     let
-        unit = if isMetric then "mm" else "in"
-        placeholderStr = if isMetric then "e.g., 25" else "e.g., 1.0"
-    in
-    div []
-        [ label [ class "block text-sm font-medium text-gray-700 mb-1" ] [ text (labelStr ++ " (" ++ unit ++ ")") ]
-        , div [ class "relative rounded-md shadow-sm" ]
-            [ input
-                [ type_ "number"
-                , class "focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-12 sm:text-sm border-gray-300 rounded-md p-2 border"
-                , placeholder placeholderStr
-                , value valueStr
-                , onInput msg
-                , step "any"
-                ]
-                []
-            , div [ class "absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none" ]
-                [ span [ class "text-gray-500 sm:text-sm" ] [ text unit ] ]
-            ]
-        ]
-
-
-viewResult : Bool -> Model -> Html Msg
-viewResult isMetric model =
-    let
-        thickness = String.toFloat model.thicknessInput
+        maxT = getMaxThickness model.shape
         
-        mmThickness =
-            thickness
-                |> Maybe.map (\t -> if isMetric then t else t * 25.4)
+        allThicknesses = 
+            thawedTable
+                |> List.map (.thickness >> toFloat)
+        
+        allowed = 
+            List.filter (\t -> t <= toFloat maxT) allThicknesses
 
-        result =
-            Maybe.andThen (getHeatingTime model.startState model.shape) mmThickness
+        formatter val =
+            let
+                mm = String.fromFloat val ++ " mm"
+                inch = Round.round 2 (val / 25.4) ++ " in"
+            in
+            mm ++ " / " ++ inch
     in
-    case (thickness, result) of
-        (Just _, Just minutes) ->
+    Slider.view
+        { value = model.thicknessInput
+        , allowedValues = allowed
+        , toMsg = SetThickness
+        , label = "Thickness"
+        , formatter = formatter
+        }
+
+
+viewResult : Model -> Html Msg
+viewResult model =
+    let
+        result =
+            getHeatingTime model.startState model.shape model.thicknessInput
+    in
+    case result of
+        Just minutes ->
             let
                 hours = minutes // 60
                 mins = modBy 60 minutes
@@ -327,15 +314,7 @@ viewResult isMetric model =
                 , span [ class "text-sm text-indigo-600 mt-2 block" ] [ text "to reach 0.5°C (1°F) less than bath temp" ]
                 ]
 
-        (Just t, Nothing) ->
-            let
-                tVal = if isMetric then t else t * 25.4
-                maxT = case (model.startState, model.shape) of
-                    (_, Slab) -> 65
-                    (_, Cylinder) -> 95
-                    (_, Sphere) -> 115
-            in
-            p [ class "text-red-600 font-medium" ] [ text ("Thickness exceeds table limit (" ++ String.fromInt maxT ++ "mm).") ]
+        Nothing ->
+             -- Should not happen with slider limits, but safe to keep
+            p [ class "text-red-600 font-medium" ] [ text "Thickness out of range." ]
 
-        _ ->
-            p [ class "text-gray-400 italic" ] [ text "Enter a valid thickness..." ]
