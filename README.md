@@ -67,25 +67,27 @@ npm run preview
 ```
 ---
 
-## Project Goals & Calculator Logic
+## Calculators
 
-The application implements mathematical models derived from Baldwin's research to provide the following features:
+The application implements mathematical models derived from Baldwin's research to provide the following tools:
 
-### 1. Heating & Pasteurization
+### 1. The Pasteurization (Safety) Calculator
+This is the most critical tool based on the document. It ensures the food has reached the required "log reduction" of pathogens like Salmonella, Listeria, and E. coli.
 
-* **Heating Time-to-Temperature**: Calculates the time required for the coldest part of the food to reach 1°F (0.5°C) less than the water bath temperature.
-* **Safety Pasteurization**: Determines the minimum hold time required to reduce pathogens (*Listeria*, *Salmonella*, and *E. coli*) to safe levels based on protein type.
-* **Thawed vs. Frozen**: Separate logic for starting temperatures of 41°F (5°C) or 0°F (-18°C).
+### 2. Heating Time Calculator (Thawed vs. Frozen)
+A tool to help users know when the center of their food has actually reached the water bath temperature.
 
-### 2. Geometric & Thermal Accuracy
+### 3. The Rapid Chilling (Cook-Chill) Calculator
+Essential for users who meal-prep (cook-chill/freeze) to ensure they move through the "danger zone" safely to prevent the outgrowth of spores.
 
-* **Shape Factors**: The calculator accounts for different heating rates based on whether the food is shaped as a **Slab** (e.g., steak), a **Cylinder** (e.g., roulade), or a **Sphere** (e.g., meatball).
-* **Thermal Diffusivity**: Uses conservative thermal diffusivity values () specific to meat, poultry, and fish to ensure a wide safety margin.
+### 4. Brine & Marinade Ratio Tool
+The guide provides specific percentages for different meats to improve water-holding capacity.
 
-### 3. Safety & Storage
+### 5. Doneness & Texture Visualizer
+A simple reference tool to help users choose their temperature based on the desired final result.
 
-* **Rapid Chilling**: Provides exact timing for chilling sealed pouches in an ice-water bath to reach 41°F (5°C) safely.
-* **Storage Calculator**: Estimates shelf-life based on refrigeration temperature (e.g., 10 days at 41°F vs. 31 days at 38°F) to prevent the production of toxins from *Clostridium botulinum*.
+### 6. Shelf-Life & Storage Timer
+A calculator to determine how long a pasteurized, chilled pouch can stay in the fridge before it becomes unsafe due to non-proteolytic C. botulinum.
 
 ---
 
