@@ -140,7 +140,7 @@ view data t model =
                 ]
             
             -- Result Section
-            , div [ class "bg-yellow-50 rounded-lg p-6 flex flex-col justify-center items-center text-center" ]
+            , div [ class "bg-yellow-50 rounded-lg p-6 flex flex-col justify-center items-center text-center", attribute "aria-live" "polite" ]
                 [ h3 [ class "text-lg font-medium text-yellow-800 mb-2" ] [ text t.resultHeader ]
                 , viewResult t data model
                 ]
@@ -150,8 +150,8 @@ view data t model =
 
 viewProteinTypeSelector : BrineStrings -> ProteinType -> Html Msg
 viewProteinTypeSelector t selected =
-    div []
-        [ label [ class "block text-sm font-medium text-gray-700 mb-2" ] [ text t.protein ]
+    div [ attribute "role" "radiogroup", attribute "aria-labelledby" "protein-type-label" ]
+        [ label [ id "protein-type-label", class "block text-sm font-medium text-gray-700 mb-2" ] [ text t.protein ]
         , div [ class "flex rounded-md shadow-sm" ]
             [ proteinTypeButton t.porkPoultry PorkPoultry selected "rounded-l-md"
             , proteinTypeButton t.brisket Brisket selected "rounded-r-md"
@@ -174,14 +174,16 @@ proteinTypeButton labelStr pType selected roundedClass =
         [ type_ "button"
         , class (baseClasses ++ " " ++ colors ++ " " ++ roundedClass)
         , onClick (SetProteinType pType)
+        , attribute "role" "radio"
+        , attribute "aria-checked" (if isSelected then "true" else "false")
         ]
         [ text labelStr ]
 
 
 viewUnitSelector : BrineStrings -> UnitSystem -> Html Msg
 viewUnitSelector t selected =
-    div []
-        [ label [ class "block text-sm font-medium text-gray-700 mb-2" ] [ text t.units ]
+    div [ attribute "role" "radiogroup", attribute "aria-labelledby" "unit-label" ]
+        [ label [ id "unit-label", class "block text-sm font-medium text-gray-700 mb-2" ] [ text t.units ]
         , div [ class "flex rounded-md shadow-sm max-w-xs" ]
             [ unitButton t.metric Metric selected "rounded-l-md"
             , unitButton t.imperial Imperial selected "rounded-r-md"
@@ -204,6 +206,8 @@ unitButton labelStr unit selected roundedClass =
         [ type_ "button"
         , class (baseClasses ++ " " ++ colors ++ " " ++ roundedClass)
         , onClick (SetUnits unit)
+        , attribute "role" "radio"
+        , attribute "aria-checked" (if isSelected then "true" else "false")
         ]
         [ text labelStr ]
 
@@ -215,10 +219,11 @@ viewLiquidWeightInput t model =
         placeholderStr = if model.units == Metric then "e.g., 1000" else "e.g., 35.27"
     in
     div []
-        [ label [ class "block text-sm font-medium text-gray-700 mb-1" ] [ text (t.weightInput ++ " (" ++ unit ++ ")") ]
+        [ label [ for "liquid-weight", class "block text-sm font-medium text-gray-700 mb-1" ] [ text (t.weightInput ++ " (" ++ unit ++ ")") ]
         , div [ class "relative rounded-md shadow-sm" ]
             [ input
                 [ type_ "number"
+                , id "liquid-weight"
                 , class "focus:ring-yellow-500 focus:border-yellow-500 block w-full pr-12 sm:text-sm border-gray-300 rounded-md p-2 border"
                 , placeholder placeholderStr
                 , value model.liquidWeightInput

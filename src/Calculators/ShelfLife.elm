@@ -66,7 +66,7 @@ view rules t appT model =
                 ]
             
             -- Result Section
-            , div [ class "bg-purple-50 rounded-lg p-6 flex flex-col justify-center items-center text-center" ]
+            , div [ class "bg-purple-50 rounded-lg p-6 flex flex-col justify-center items-center text-center", attribute "aria-live" "polite" ]
                 [ h3 [ class "text-lg font-medium text-purple-800 mb-2" ] [ text t.resultHeader ]
                 , viewResult rules t model
                 ]

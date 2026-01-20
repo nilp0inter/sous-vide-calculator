@@ -36,6 +36,9 @@ view props =
 
         maxIndex = List.length sortedValues - 1
         
+        realMin = List.head sortedValues |> Maybe.withDefault 0
+        realMax = List.reverse sortedValues |> List.head |> Maybe.withDefault 0
+
         -- Handle slider change
         handleInput str =
             String.toInt str
@@ -60,6 +63,11 @@ view props =
             , Html.Attributes.max (String.fromInt maxIndex)
             , value (String.fromInt currentIndex)
             , step "1"
+            , attribute "aria-valuemin" (String.fromFloat realMin)
+            , attribute "aria-valuemax" (String.fromFloat realMax)
+            , attribute "aria-valuenow" (String.fromFloat props.value)
+            , attribute "aria-valuetext" (props.formatter props.value)
+            , attribute "aria-label" props.label
             , onInput handleInput
             , class "w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
             ]

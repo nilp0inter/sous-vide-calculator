@@ -113,7 +113,7 @@ view data t heatingT appT model =
                 ]
             
             -- Result Section
-            , div [ class "bg-emerald-50 rounded-lg p-6 flex flex-col justify-center items-center text-center" ]
+            , div [ class "bg-emerald-50 rounded-lg p-6 flex flex-col justify-center items-center text-center", attribute "aria-live" "polite" ]
                 [ h3 [ class "text-lg font-medium text-emerald-800 mb-2" ] [ text t.resultHeader ]
                 , viewResult data t model
                 ]
@@ -123,8 +123,8 @@ view data t heatingT appT model =
 
 viewShapeSelector : RapidChillingStrings -> HeatingStrings -> Shape -> Html Msg
 viewShapeSelector t heatingT selected =
-    div []
-        [ label [ class "block text-sm font-medium text-gray-700 mb-2" ] [ text t.shape ]
+    div [ attribute "role" "radiogroup", attribute "aria-labelledby" "rc-shape-label" ]
+        [ label [ id "rc-shape-label", class "block text-sm font-medium text-gray-700 mb-2" ] [ text t.shape ]
         , div [ class "grid grid-cols-1 gap-3 sm:grid-cols-3" ]
             [ shapeButton heatingT.slab Slab selected heatingT.slabDesc
             , shapeButton heatingT.cylinder Cylinder selected heatingT.cylinderDesc
@@ -148,6 +148,8 @@ shapeButton labelStr shape selected description =
         [ type_ "button"
         , class (baseClasses ++ " " ++ colors)
         , onClick (SetShape shape)
+        , attribute "role" "radio"
+        , attribute "aria-checked" (if isSelected then "true" else "false")
         ]
         [ span [ class "block font-bold" ] [ text labelStr ]
         , span [ class ("block text-xs mt-1 " ++ if isSelected then "text-emerald-500" else "text-gray-500") ] [ text description ]

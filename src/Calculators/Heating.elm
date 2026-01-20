@@ -134,7 +134,7 @@ view data t appT model =
                 ]
             
             -- Result Section
-            , div [ class "bg-indigo-50 rounded-lg p-6 flex flex-col justify-center items-center text-center" ]
+            , div [ class "bg-indigo-50 rounded-lg p-6 flex flex-col justify-center items-center text-center", attribute "aria-live" "polite" ]
                 [ h3 [ class "text-lg font-medium text-indigo-800 mb-2" ] [ text t.resultHeader ]
                 , viewResult data t model
                 ]
@@ -144,8 +144,8 @@ view data t appT model =
 
 viewStateSelector : HeatingStrings -> StartState -> Html Msg
 viewStateSelector t selected =
-    div []
-        [ label [ class "block text-sm font-medium text-gray-700 mb-2" ] [ text t.startState ]
+    div [ attribute "role" "radiogroup", attribute "aria-labelledby" "start-state-label" ]
+        [ label [ id "start-state-label", class "block text-sm font-medium text-gray-700 mb-2" ] [ text t.startState ]
         , div [ class "flex rounded-md shadow-sm" ]
             [ stateButton t.thawed Thawed selected "rounded-l-md"
             , stateButton t.frozen Frozen selected "rounded-r-md"
@@ -168,14 +168,16 @@ stateButton labelStr state selected roundedClass =
         [ type_ "button"
         , class (baseClasses ++ " " ++ colors ++ " " ++ roundedClass)
         , onClick (SetStartState state)
+        , attribute "role" "radio"
+        , attribute "aria-checked" (if isSelected then "true" else "false")
         ]
         [ text labelStr ]
 
 
 viewShapeSelector : HeatingStrings -> Shape -> Html Msg
 viewShapeSelector t selected =
-    div []
-        [ label [ class "block text-sm font-medium text-gray-700 mb-2" ] [ text t.shape ]
+    div [ attribute "role" "radiogroup", attribute "aria-labelledby" "shape-label" ]
+        [ label [ id "shape-label", class "block text-sm font-medium text-gray-700 mb-2" ] [ text t.shape ]
         , div [ class "grid grid-cols-1 gap-3 sm:grid-cols-3" ]
             [ shapeButton t.slab Slab selected t.slabDesc
             , shapeButton t.cylinder Cylinder selected t.cylinderDesc
@@ -199,6 +201,8 @@ shapeButton labelStr shape selected description =
         [ type_ "button"
         , class (baseClasses ++ " " ++ colors)
         , onClick (SetShape shape)
+        , attribute "role" "radio"
+        , attribute "aria-checked" (if isSelected then "true" else "false")
         ]
         [ span [ class "block font-bold" ] [ text labelStr ]
         , span [ class ("block text-xs mt-1 " ++ if isSelected then "text-indigo-500" else "text-gray-500") ] [ text description ]

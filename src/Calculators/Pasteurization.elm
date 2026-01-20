@@ -121,7 +121,7 @@ view data t appT model =
                 ]
             
             -- Result Section
-            , div [ class "bg-blue-50 rounded-lg p-6 flex flex-col justify-center items-center text-center" ]
+            , div [ class "bg-blue-50 rounded-lg p-6 flex flex-col justify-center items-center text-center", attribute "aria-live" "polite" ]
                 [ h3 [ class "text-lg font-medium text-blue-800 mb-2" ] [ text t.resultHeader ]
                 , viewResult data t model
                 ]
@@ -131,8 +131,8 @@ view data t appT model =
 
 viewProteinSelector : PasteurizationStrings -> Protein -> Html Msg
 viewProteinSelector t selected =
-    div []
-        [ label [ class "block text-sm font-medium text-gray-700 mb-2" ] [ text t.protein ]
+    div [ attribute "role" "radiogroup", attribute "aria-labelledby" "protein-label" ]
+        [ label [ id "protein-label", class "block text-sm font-medium text-gray-700 mb-2" ] [ text t.protein ]
         , div [ class "grid grid-cols-2 gap-3" ]
             [ proteinButton t.meat Meat selected
             , proteinButton t.poultry Poultry selected
@@ -157,6 +157,8 @@ proteinButton labelStr protein selected =
         [ type_ "button"
         , class (baseClasses ++ " " ++ colors)
         , onClick (SetProtein protein)
+        , attribute "role" "radio"
+        , attribute "aria-checked" (if isSelected then "true" else "false")
         ]
         [ text labelStr ]
 
@@ -222,6 +224,7 @@ viewMarinadeToggle t isAcidic =
                 input
                     [
                         type_ "checkbox"
+                    , id "acidic-marinade-toggle"
                     , class "focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                     , checked isAcidic
                     , onClick ToggleAcidicMarinade
@@ -229,7 +232,7 @@ viewMarinadeToggle t isAcidic =
                     []
             ]
         , div [ class "ml-3 text-sm" ]
-            [ label [ class "font-medium text-gray-700" ] [ text t.safetyBuffer ]
+            [ label [ for "acidic-marinade-toggle", class "font-medium text-gray-700" ] [ text t.safetyBuffer ]
             , p [ class "text-gray-500" ] [ text t.safetyDesc ]
             ]
         ]

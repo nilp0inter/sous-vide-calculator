@@ -477,6 +477,7 @@ viewLanguageSelector currentLang =
     div [ class "relative" ]
         [ select
             [ onInput SetLanguage
+            , attribute "aria-label" "Select Language"
             , class "block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
             ]
             [ option [ value "de", selected (currentLang == De) ] [ text "Deutsch" ]
@@ -491,7 +492,7 @@ viewLanguageSelector currentLang =
 
 viewLoading : Html Msg
 viewLoading =
-    div [ class "min-h-screen flex items-center justify-center bg-gray-50" ]
+    div [ class "min-h-screen flex items-center justify-center bg-gray-50", attribute "role" "status" ]
         [ div [ class "text-center" ]
             [ div [ class "inline-block animate-spin rounded-full h-8 w-8 border-4 border-gray-300 border-t-indigo-600 mb-4" ] []
             , p [ class "text-gray-500" ] [ text "Loading resources..." ]
@@ -522,7 +523,7 @@ viewTabs : Translations -> Model -> Html Msg
 viewTabs t model =
     div [ class "bg-white border-b border-gray-200 overflow-x-auto scrollbar-hide" ]
         [ div [ class "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" ]
-            [ nav [ class "-mb-px flex space-x-6 sm:space-x-8", attribute "aria-label" "Tabs" ]
+            [ nav [ class "-mb-px flex space-x-6 sm:space-x-8", attribute "role" "tablist", attribute "aria-label" "Tabs" ]
                 [ tabButton Pasteurization model.activeTab t.tabs.pasteurization
                 , tabButton Heating model.activeTab t.tabs.heating
                 , tabButton RapidChilling model.activeTab t.tabs.rapidChilling
@@ -552,6 +553,8 @@ tabButton tab currentTab label =
     button
         [ onClick (SelectTab tab)
         , class (baseClasses ++ " " ++ stateClasses)
+        , attribute "role" "tab"
+        , attribute "aria-selected" (if isActive then "true" else "false")
         ]
         [ text label ]
 

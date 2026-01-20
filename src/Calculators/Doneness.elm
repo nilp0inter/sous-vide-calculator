@@ -84,8 +84,8 @@ view data t model =
 
 viewProteinSelector : DonenessStrings -> Protein -> Html Msg
 viewProteinSelector t selected =
-    div []
-        [ label [ class "block text-sm font-medium text-gray-700 mb-2" ] [ text t.protein ]
+    div [ attribute "role" "radiogroup", attribute "aria-labelledby" "doneness-protein-label" ]
+        [ label [ id "doneness-protein-label", class "block text-sm font-medium text-gray-700 mb-2" ] [ text t.protein ]
         , div [ class "flex rounded-md shadow-sm max-w-sm" ]
             [ proteinButton t.meat Beef selected "rounded-l-md"
             , proteinButton t.fish Fish selected "rounded-r-md"
@@ -108,6 +108,8 @@ proteinButton labelStr protein selected roundedClass =
         [ type_ "button"
         , class (baseClasses ++ " " ++ colors ++ " " ++ roundedClass)
         , onClick (SetProtein protein)
+        , attribute "role" "radio"
+        , attribute "aria-checked" (if isSelected then "true" else "false")
         ]
         [ text labelStr ]
 
