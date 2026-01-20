@@ -47,6 +47,22 @@ getDonenessLevels data protein =
         Fish -> data.fish
 
 
+getLabels : Protein -> String -> (String, String)
+getLabels protein id =
+    case (protein, id) of
+        (Beef, "very_rare") -> ("Very-rare", "Red, raw center. Very soft.")
+        (Beef, "rare") -> ("Rare", "Cool red center. Soft and spongy texture.")
+        (Beef, "medium_rare") -> ("Medium-Rare", "Warm red center. Firmer texture, more savory.")
+        (Beef, "medium") -> ("Medium", "Pink center. Firm texture, significant juice loss starts.")
+        
+        (Fish, "rare") -> ("Rare", "Translucent, soft, very moist. (e.g. Salmon/Tuna)")
+        (Fish, "medium_rare") -> ("Medium-Rare", "Starting to flake, still very moist.")
+        (Fish, "medium") -> ("Medium", "Firm, flakes easily, drier. (Traditional)")
+        
+        -- Fallback
+        (_, _) -> (id, "")
+
+
 -- VIEW
 
 
@@ -61,7 +77,7 @@ view data model =
             ]
         
         , div [ class "grid grid-cols-1 md:grid-cols-3 gap-6" ]
-            (List.map viewDonenessCard (getDonenessLevels data model.protein))
+            (List.map (viewDonenessCard model.protein) (getDonenessLevels data model.protein))
         ]
 
 
@@ -95,18 +111,20 @@ proteinButton labelStr protein selected roundedClass =
         [ text labelStr ]
 
 
-viewDonenessCard : DonenessLevel -> Html Msg
-viewDonenessCard level =
+viewDonenessCard : Protein -> DonenessLevel -> Html Msg
+viewDonenessCard protein level =
     let
+        (name, desc) = getLabels protein level.id
+        
         tempString =
             String.fromFloat level.tempC ++ "°C / " ++ String.fromInt level.tempF ++ "°F"
     in
     div [ class "flex flex-col rounded-lg shadow overflow-hidden border border-gray-200" ]
         [ div [ class ("px-6 py-4 flex-grow flex flex-col items-center justify-center text-center " ++ level.color) ]
-            [ h3 [ class "text-lg font-bold" ] [ text level.name ]
+            [ h3 [ class "text-lg font-bold" ] [ text name ]
             , span [ class "text-3xl font-extrabold mt-2" ] [ text tempString ]
             ]
         , div [ class "px-6 py-4 bg-gray-50 flex-grow" ]
-            [ p [ class "text-sm text-gray-600 text-center" ] [ text level.desc ]
+            [ p [ class "text-sm text-gray-600 text-center" ] [ text desc ]
             ]
         ]

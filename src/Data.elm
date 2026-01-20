@@ -43,10 +43,9 @@ type alias DonenessData =
     }
 
 type alias DonenessLevel =
-    { name : String
+    { id : String
     , tempC : Float
     , tempF : Int
-    , desc : String
     , color : String
     }
 
@@ -117,11 +116,10 @@ donenessDecoder =
 
 donenessLevelDecoder : Decoder DonenessLevel
 donenessLevelDecoder =
-    map5 DonenessLevel
-        (field "name" string)
+    map4 DonenessLevel
+        (field "id" string)
         (field "tempC" float)
         (field "tempF" int)
-        (field "desc" string)
         (field "color" string)
 
 shelfLifeRuleDecoder : Decoder ShelfLifeRule

@@ -144,14 +144,15 @@
   ],
   "doneness": {
     "beef": [
-      { "name": "Rare", "tempC": 50, "tempF": 125, "desc": "Cool red center. Soft and spongy texture.", "color": "bg-red-600 text-white" },
-      { "name": "Medium-Rare", "tempC": 55, "tempF": 130, "desc": "Warm red center. Firmer texture, more savory.", "color": "bg-red-500 text-white" },
-      { "name": "Medium", "tempC": 60, "tempF": 140, "desc": "Pink center. Firm texture, significant juice loss starts.", "color": "bg-pink-400 text-white" }
+      { "id": "very_rare", "tempC": 49, "tempF": 120, "color": "bg-red-700 text-white" },
+      { "id": "rare", "tempC": 50, "tempF": 125, "color": "bg-red-600 text-white" },
+      { "id": "medium_rare", "tempC": 55, "tempF": 130, "color": "bg-red-500 text-white" },
+      { "id": "medium", "tempC": 60, "tempF": 140, "color": "bg-pink-400 text-white" }
     ],
     "fish": [
-      { "name": "Rare", "tempC": 42, "tempF": 108, "desc": "Translucent, soft, very moist. (e.g. Salmon/Tuna)", "color": "bg-orange-300 text-gray-900" },
-      { "name": "Medium-Rare", "tempC": 50, "tempF": 122, "desc": "Starting to flake, still very moist.", "color": "bg-orange-200 text-gray-900" },
-      { "name": "Medium", "tempC": 60, "tempF": 140, "desc": "Firm, flakes easily, drier. (Traditional)", "color": "bg-yellow-100 text-gray-900" }
+      { "id": "rare", "tempC": 42, "tempF": 108, "color": "bg-orange-300 text-gray-900" },
+      { "id": "medium_rare", "tempC": 50, "tempF": 122, "color": "bg-orange-200 text-gray-900" },
+      { "id": "medium", "tempC": 60, "tempF": 140, "color": "bg-yellow-100 text-gray-900" }
     ]
   },
   "shelfLife": [
@@ -161,7 +162,7 @@
     { "maxTemp": 7.0, "days": 5 }
   ],
   "brine": {
-    "porkPoultry": { "saltMin": 0.05, "saltMax": 0.10, "sugar": 0.0 },
+    "porkPoultry": { "saltMin": 0.05, "saltMax": 0.10, "sugar": 0.03 },
     "brisket": { "saltMin": 0.04, "saltMax": 0.04, "sugar": 0.03 }
   }
 }

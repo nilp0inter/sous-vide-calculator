@@ -48,8 +48,30 @@ update msg model =
         SetProteinType pType ->
             { model | proteinType = pType }
 
-        SetUnits units ->
-            { model | units = units }
+        SetUnits newUnits ->
+            let
+                convertedInput =
+                    if newUnits == model.units then
+                        model.liquidWeightInput
+                    else
+                        case String.toFloat model.liquidWeightInput of
+                            Just val ->
+                                case ( model.units, newUnits ) of
+                                    ( Metric, Imperial ) ->
+                                        -- g -> oz
+                                        Round.round 2 (val / 28.3495)
+
+                                    ( Imperial, Metric ) ->
+                                        -- oz -> g
+                                        Round.round 2 (val * 28.3495)
+
+                                    _ ->
+                                        model.liquidWeightInput
+
+                            Nothing ->
+                                model.liquidWeightInput
+            in
+            { model | units = newUnits, liquidWeightInput = convertedInput }
 
 
 
