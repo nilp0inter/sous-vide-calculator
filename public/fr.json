@@ -1,0 +1,96 @@
+{
+  "app": {
+    "title": "Calculateur Sous-Vide",
+    "subtitle": "Modèle Baldwin",
+    "footer": "Basé sur 'A Practical Guide to Sous Vide Cooking' du Dr. Douglas Baldwin.",
+    "min": "Min",
+    "max": "Max"
+  },
+  "tabs": {
+    "pasteurization": "Pasteurisation",
+    "heating": "Temps de Chauffage",
+    "rapidChilling": "Refroidissement Rapide",
+    "brine": "Saumure & Marinade",
+    "doneness": "Cuisson",
+    "shelfLife": "Durée de Conservation"
+  },
+  "heating": {
+    "title": "Calculateur de Temps de Chauffage",
+    "startState": "État Initial",
+    "thawed": "Décongelé / Frais",
+    "frozen": "Congelé",
+    "shape": "Forme",
+    "slab": "Plaque",
+    "cylinder": "Cylindre",
+    "sphere": "Sphère",
+    "slabDesc": "Steak, Côtelettes",
+    "cylinderDesc": "Roulade, Saucisse",
+    "sphereDesc": "Boulette de viande, Rôti",
+    "thickness": "Épaisseur",
+    "resultHeader": "Temps pour atteindre la température",
+    "resultSuffix": "pour atteindre 0,5°C (1°F) de moins que la temp. du bain",
+    "errorThickness": "Épaisseur hors limites."
+  },
+  "pasteurization": {
+    "title": "Calculateur de Pasteurisation",
+    "protein": "Type de Protéine",
+    "meat": "Viande (Bœuf/Porc/Agneau)",
+    "poultry": "Volaille",
+    "leanFish": "Poisson Maigre",
+    "fattyFish": "Poisson Gras",
+    "thickness": "Épaisseur",
+    "temp": "Température du Bain",
+    "safetyBuffer": "Marge de Sécurité (Marinade Acide)",
+    "safetyDesc": "Doublez le temps de pasteurisation si vous utilisez une marinade acide.",
+    "resultHeader": "Temps Minimum",
+    "doubled": "(Doublé pour sécurité)",
+    "errorThickness": "L'épaisseur dépasse la limite de 70mm du tableau.",
+    "errorTemp": "Température hors limites pour cette protéine."
+  },
+  "rapidChilling": {
+    "title": "Calculateur de Refroidissement Rapide (Cook-Chill)",
+    "shape": "Forme",
+    "thickness": "Épaisseur",
+    "resultHeader": "Temps de Refroidissement",
+    "resultSuffix": "dans de l'eau glacée (au moins la moitié de glace) pour atteindre 5°C (41°F)",
+    "errorThickness": "Épaisseur hors limites."
+  },
+  "brine": {
+    "title": "Outil de Ratio Saumure & Marinade",
+    "protein": "Type de Protéine",
+    "porkPoultry": "Porc / Volaille",
+    "brisket": "Poitrine de Bœuf (Brisket)",
+    "units": "Unités d'Entrée",
+    "metric": "Métrique (g)",
+    "imperial": "Impérial (oz)",
+    "weightInput": "Poids de l'Eau/Liquide",
+    "resultHeader": "Quantités Requises",
+    "salt": "Sel :",
+    "sugar": "Sucre :",
+    "error": "Entrez un poids de liquide valide..."
+  },
+  "doneness": {
+    "title": "Visualiseur de Cuisson & Texture",
+    "protein": "Type de Protéine",
+    "meat": "Viande (Bœuf/Agneau)",
+    "fish": "Poisson",
+    "beef": {
+        "very_rare": { "name": "Bleu", "desc": "Rouge, centre cru. Très tendre." },
+        "rare": { "name": "Saignant", "desc": "Centre rouge frais. Texture tendre et spongieuse." },
+        "medium_rare": { "name": "À point", "desc": "Centre rouge chaud. Texture plus ferme, plus savoureux." },
+        "medium": { "name": "Bien cuit", "desc": "Centre rose. Texture ferme, début de perte de jus significative." }
+    },
+    "fishDesc": {
+        "rare": { "name": "Rosé", "desc": "Translucide, mou, très humide. (ex: Saumon/Thon)" },
+        "medium_rare": { "name": "À point", "desc": "Commence à s'effeuiller, encore très humide." },
+        "medium": { "name": "Cuit", "desc": "Ferme, s'effeuille facilement, plus sec. (Traditionnel)" }
+    }
+  },
+  "shelfLife": {
+    "title": "Minuteur de Durée de Conservation & Stockage",
+    "temp": "Température du Réfrigérateur",
+    "resultHeader": "Stockage Maximum",
+    "suffix": "à cette température.",
+    "error": "La température est trop élevée pour un stockage prolongé sûr."
+  }
+}

@@ -109,10 +109,58 @@ type Status
 type Language
 
 
+
+
+
+
+
+
     = En
 
 
+
+
+
+
+
+
     | Es
+
+
+
+
+
+
+
+
+    | Fr
+
+
+
+
+
+
+
+
+    | De
+
+
+
+
+
+
+
+
+    | Pt
+
+
+
+
+
+
+
+
+    | Fi
 
 
 
@@ -175,19 +223,43 @@ init langFlag =
     let
 
 
-        defaultLang =
+                                        defaultLang =
 
 
-            if String.startsWith "es" (String.toLower langFlag) then
+                                            if String.startsWith "es" (String.toLower langFlag) then
 
 
-                Es
+                                                Es
 
 
-            else
+                                            else if String.startsWith "fr" (String.toLower langFlag) then
 
 
-                En
+                                                Fr
+
+
+                                            else if String.startsWith "de" (String.toLower langFlag) then
+
+
+                                                De
+
+
+                                            else if String.startsWith "pt" (String.toLower langFlag) then
+
+
+                                                Pt
+
+
+                                            else if String.startsWith "fi" (String.toLower langFlag) then
+
+
+                                                Fi
+
+
+                                            else
+
+
+                                                En
 
 
     in
@@ -266,6 +338,10 @@ languageToFilename lang =
     case lang of
         En -> "en.json"
         Es -> "es.json"
+        Fr -> "fr.json"
+        De -> "de.json"
+        Pt -> "pt.json"
+        Fi -> "fi.json"
 
 
 -- UPDATE
@@ -295,6 +371,10 @@ update msg model =
                 newLang =
                     case langStr of
                         "es" -> Es
+                        "fr" -> Fr
+                        "de" -> De
+                        "pt" -> Pt
+                        "fi" -> Fi
                         _ -> En
             in
             if newLang == model.currentLanguage then
@@ -399,8 +479,12 @@ viewLanguageSelector currentLang =
             [ onInput SetLanguage
             , class "block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
             ]
-            [ option [ value "en", selected (currentLang == En) ] [ text "English" ]
+            [ option [ value "de", selected (currentLang == De) ] [ text "Deutsch" ]
+            , option [ value "en", selected (currentLang == En) ] [ text "English" ]
             , option [ value "es", selected (currentLang == Es) ] [ text "Español" ]
+            , option [ value "fr", selected (currentLang == Fr) ] [ text "Français" ]
+            , option [ value "pt", selected (currentLang == Pt) ] [ text "Português" ]
+            , option [ value "fi", selected (currentLang == Fi) ] [ text "Suomi" ]
             ]
         ]
 

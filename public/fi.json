@@ -1,0 +1,96 @@
+{
+  "app": {
+    "title": "Sous Vide -laskin",
+    "subtitle": "Baldwinin malli",
+    "footer": "Perustuu tri Douglas Baldwinin teokseen 'A Practical Guide to Sous Vide Cooking'.",
+    "min": "Min",
+    "max": "Maks"
+  },
+  "tabs": {
+    "pasteurization": "Pastörointi",
+    "heating": "Kuumennusaika",
+    "rapidChilling": "Pikajäähdytys",
+    "brine": "Suolavesi & Marinadi",
+    "doneness": "Kypsyysaste",
+    "shelfLife": "Säilyvyys"
+  },
+  "heating": {
+    "title": "Kuumennusaikalaskin",
+    "startState": "Alkutila",
+    "thawed": "Sula / Tuore",
+    "frozen": "Jäädytetty",
+    "shape": "Muoto",
+    "slab": "Levy",
+    "cylinder": "Sylinteri",
+    "sphere": "Pallo",
+    "slabDesc": "Pihvi, Kyljykset",
+    "cylinderDesc": "Rulla, Makkara",
+    "sphereDesc": "Lihapulla, Paisti",
+    "thickness": "Paksuus",
+    "resultHeader": "Aika tavoitelämpötilaan",
+    "resultSuffix": "saavuttaakseen 0,5°C (1°F) vähemmän kuin veden lämpötila",
+    "errorThickness": "Paksuus alueen ulkopuolella."
+  },
+  "pasteurization": {
+    "title": "Pastörointilaskin",
+    "protein": "Proteiinityyppi",
+    "meat": "Liha (Nauta/Sika/Lammas)",
+    "poultry": "Siipikarja",
+    "leanFish": "Vähärasvainen kala",
+    "fattyFish": "Rasvainen kala",
+    "thickness": "Paksuus",
+    "temp": "Veden lämpötila",
+    "safetyBuffer": "Turvamarginaali (Hapan marinadi)",
+    "safetyDesc": "Kaksinkertaista pastörointiaika, jos käytät hapanta marinadia.",
+    "resultHeader": "Vähimmäisaika",
+    "doubled": "(Kaksinkertaistettu turvallisuuden vuoksi)",
+    "errorThickness": "Paksuus ylittää taulukon 70 mm rajan.",
+    "errorTemp": "Lämpötila alueen ulkopuolella tälle proteiinille."
+  },
+  "rapidChilling": {
+    "title": "Pikajäähdytyslaskin (Cook-Chill)",
+    "shape": "Muoto",
+    "thickness": "Paksuus",
+    "resultHeader": "Jäähdytysaika",
+    "resultSuffix": "jäävedessä (vähintään puolet jäätä) 5°C (41°F) saavuttamiseksi",
+    "errorThickness": "Paksuus alueen ulkopuolella."
+  },
+  "brine": {
+    "title": "Suolavesi- ja marinadisuhdetyökalu",
+    "protein": "Proteiinityyppi",
+    "porkPoultry": "Sika / Siipikarja",
+    "brisket": "Rinnus (Brisket)",
+    "units": "Syöttöyksiköt",
+    "metric": "Metrinen (g)",
+    "imperial": "Imperiaalinen (oz)",
+    "weightInput": "Veden/nesteen paino",
+    "resultHeader": "Vaaditut määrät",
+    "salt": "Suola:",
+    "sugar": "Sokeri:",
+    "error": "Syötä kelvollinen nesteen paino..."
+  },
+  "doneness": {
+    "title": "Kypsyys- ja rakennevisualisoija",
+    "protein": "Proteiinityyppi",
+    "meat": "Liha (Nauta/Lammas)",
+    "fish": "Kala",
+    "beef": {
+        "very_rare": { "name": "Very-rare (Blue)", "desc": "Punainen, raaka keskus. Erittäin pehmeä." },
+        "rare": { "name": "Rare (Raaka)", "desc": "Viileä punainen keskus. Pehmeä ja sienimäinen rakenne." },
+        "medium_rare": { "name": "Medium-Rare", "desc": "Lämmin punainen keskus. Kiinteämpi rakenne, maukkaampi." },
+        "medium": { "name": "Medium", "desc": "Vaaleanpunainen keskus. Kiinteä rakenne, huomattava nestehukka alkaa." }
+    },
+    "fishDesc": {
+        "rare": { "name": "Rare", "desc": "Läpikuultava, pehmeä, erittäin kostea. (esim. Lohi/Tonnikala)" },
+        "medium_rare": { "name": "Medium-Rare", "desc": "Alkaa lohkeilla, edelleen hyvin kostea." },
+        "medium": { "name": "Medium", "desc": "Kiinteä, lohkeilee helposti, kuivempi. (Perinteinen)" }
+    }
+  },
+  "shelfLife": {
+    "title": "Säilyvyys- ja varastointiajastin",
+    "temp": "Jääkaapin lämpötila",
+    "resultHeader": "Enimmäissäilytys",
+    "suffix": "tässä lämpötilassa.",
+    "error": "Lämpötila on liian korkea turvalliseen pitkäaikaissäilytykseen."
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "app": {
+    "title": "Calculadora Sous Vide",
+    "subtitle": "Modelo Baldwin",
+    "footer": "Baseado em 'A Practical Guide to Sous Vide Cooking' do Dr. Douglas Baldwin.",
+    "min": "Mín",
+    "max": "Máx"
+  },
+  "tabs": {
+    "pasteurization": "Pasteurização",
+    "heating": "Tempo de Aquecimento",
+    "rapidChilling": "Resfriamento Rápido",
+    "brine": "Salmoura e Marinada",
+    "doneness": "Ponto de Cozimento",
+    "shelfLife": "Vida Útil"
+  },
+  "heating": {
+    "title": "Calculadora de Tempo de Aquecimento",
+    "startState": "Estado Inicial",
+    "thawed": "Descongelado / Fresco",
+    "frozen": "Congelado",
+    "shape": "Formato",
+    "slab": "Placa (Filé)",
+    "cylinder": "Cilindro",
+    "sphere": "Esfera",
+    "slabDesc": "Bife, Costeletas",
+    "cylinderDesc": "Rocambole, Linguiça",
+    "sphereDesc": "Almôndega, Assado",
+    "thickness": "Espessura",
+    "resultHeader": "Tempo para Atingir Temperatura",
+    "resultSuffix": "para chegar a 0,5°C (1°F) a menos que a temp. do banho",
+    "errorThickness": "Espessura fora do limite."
+  },
+  "pasteurization": {
+    "title": "Calculadora de Pasteurização",
+    "protein": "Tipo de Proteína",
+    "meat": "Carne (Boi/Porco/Cordeiro)",
+    "poultry": "Aves",
+    "leanFish": "Peixe Magro",
+    "fattyFish": "Peixe Gordo",
+    "thickness": "Espessura",
+    "temp": "Temperatura do Banho",
+    "safetyBuffer": "Margem de Segurança (Marinada Ácida)",
+    "safetyDesc": "Dobre o tempo de pasteurização se usar marinada ácida.",
+    "resultHeader": "Tempo Mínimo",
+    "doubled": "(Dobrado por segurança)",
+    "errorThickness": "Espessura excede o limite de 70mm da tabela.",
+    "errorTemp": "Temperatura fora do limite para esta proteína."
+  },
+  "rapidChilling": {
+    "title": "Calculadora de Resfriamento Rápido (Cook-Chill)",
+    "shape": "Formato",
+    "thickness": "Espessura",
+    "resultHeader": "Tempo de Resfriamento",
+    "resultSuffix": "em água com gelo (pelo menos metade gelo) para atingir 5°C (41°F)",
+    "errorThickness": "Espessura fora do limite."
+  },
+  "brine": {
+    "title": "Ferramenta de Proporção de Salmoura",
+    "protein": "Tipo de Proteína",
+    "porkPoultry": "Porco / Aves",
+    "brisket": "Peito Bovino (Brisket)",
+    "units": "Unidades de Entrada",
+    "metric": "Métrico (g)",
+    "imperial": "Imperial (oz)",
+    "weightInput": "Peso da Água/Líquido",
+    "resultHeader": "Quantidades Necessárias",
+    "salt": "Sal:",
+    "sugar": "Açúcar:",
+    "error": "Insira um peso de líquido válido..."
+  },
+  "doneness": {
+    "title": "Visualizador de Ponto e Textura",
+    "protein": "Tipo de Proteína",
+    "meat": "Carne (Boi/Cordeiro)",
+    "fish": "Peixe",
+    "beef": {
+        "very_rare": { "name": "Selado (Bleu)", "desc": "Vermelho, centro cru. Muito macio." },
+        "rare": { "name": "Malpassado", "desc": "Centro vermelho frio. Textura macia e esponjosa." },
+        "medium_rare": { "name": "Ao Ponto para Mal", "desc": "Centro vermelho morno. Textura mais firme, mais saboroso." },
+        "medium": { "name": "Ao Ponto", "desc": "Centro rosa. Textura firme, começa a perder suculência." }
+    },
+    "fishDesc": {
+        "rare": { "name": "Malpassado", "desc": "Translúcido, macio, muito úmido. (ex: Salmão/Atum)" },
+        "medium_rare": { "name": "Ao Ponto para Mal", "desc": "Começa a lascar, ainda muito úmido." },
+        "medium": { "name": "Ao Ponto", "desc": "Firme, lasca facilmente, mais seco. (Tradicional)" }
+    }
+  },
+  "shelfLife": {
+    "title": "Temporizador de Validade e Armazenamento",
+    "temp": "Temperatura da Geladeira",
+    "resultHeader": "Armazenamento Máximo",
+    "suffix": "nesta temperatura.",
+    "error": "A temperatura é muito alta para armazenamento seguro a longo prazo."
+  }
+}

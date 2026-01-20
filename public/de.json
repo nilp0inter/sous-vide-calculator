@@ -1,0 +1,96 @@
+{
+  "app": {
+    "title": "Sous Vide Rechner",
+    "subtitle": "Baldwin Modell",
+    "footer": "Basierend auf 'A Practical Guide to Sous Vide Cooking' von Dr. Douglas Baldwin.",
+    "min": "Min",
+    "max": "Max"
+  },
+  "tabs": {
+    "pasteurization": "Pasteurisierung",
+    "heating": "Aufwärmzeit",
+    "rapidChilling": "Schnellkühlen",
+    "brine": "Lake & Marinade",
+    "doneness": "Garstufe",
+    "shelfLife": "Haltbarkeit"
+  },
+  "heating": {
+    "title": "Aufwärmzeit-Rechner",
+    "startState": "Ausgangszustand",
+    "thawed": "Aufgetaut / Frisch",
+    "frozen": "Gefroren",
+    "shape": "Form",
+    "slab": "Scheibe",
+    "cylinder": "Zylinder",
+    "sphere": "Kugel",
+    "slabDesc": "Steak, Kotelett",
+    "cylinderDesc": "Roulade, Wurst",
+    "sphereDesc": "Hackbällchen, Braten",
+    "thickness": "Dicke",
+    "resultHeader": "Zeit bis zur Temperatur",
+    "resultSuffix": "um 0,5°C (1°F) weniger als die Badtemperatur zu erreichen",
+    "errorThickness": "Dicke außerhalb des zulässigen Bereichs."
+  },
+  "pasteurization": {
+    "title": "Pasteurisierungs-Rechner",
+    "protein": "Proteinart",
+    "meat": "Fleisch (Rind/Schwein/Lamm)",
+    "poultry": "Geflügel",
+    "leanFish": "Magerer Fisch",
+    "fattyFish": "Fetter Fisch",
+    "thickness": "Dicke",
+    "temp": "Badtemperatur",
+    "safetyBuffer": "Sicherheitspuffer (saure Marinade)",
+    "safetyDesc": "Verdoppeln Sie die Pasteurisierungszeit bei Verwendung einer sauren Marinade.",
+    "resultHeader": "Mindestzeit",
+    "doubled": "(Verdoppelt zur Sicherheit)",
+    "errorThickness": "Dicke überschreitet das Tabellenlimit von 70mm.",
+    "errorTemp": "Temperatur außerhalb des Bereichs für dieses Protein."
+  },
+  "rapidChilling": {
+    "title": "Schnellkühl-Rechner (Cook-Chill)",
+    "shape": "Form",
+    "thickness": "Dicke",
+    "resultHeader": "Kühlzeit",
+    "resultSuffix": "in Eiswasser (mindestens zur Hälfte Eis), um 5°C (41°F) zu erreichen",
+    "errorThickness": "Dicke außerhalb des zulässigen Bereichs."
+  },
+  "brine": {
+    "title": "Lake & Marinade Verhältnis-Tool",
+    "protein": "Proteinart",
+    "porkPoultry": "Schwein / Geflügel",
+    "brisket": "Rinderbrust (Brisket)",
+    "units": "Eingabeeinheiten",
+    "metric": "Metrisch (g)",
+    "imperial": "Imperial (oz)",
+    "weightInput": "Gewicht des Wassers/der Flüssigkeit",
+    "resultHeader": "Benötigte Mengen",
+    "salt": "Salz:",
+    "sugar": "Zucker:",
+    "error": "Geben Sie ein gültiges Flüssigkeitsgewicht ein..."
+  },
+  "doneness": {
+    "title": "Garstufen & Textur Visualisierer",
+    "protein": "Proteinart",
+    "meat": "Fleisch (Rind/Lamm)",
+    "fish": "Fisch",
+    "beef": {
+        "very_rare": { "name": "Bleu (Very Rare)", "desc": "Rot, roher Kern. Sehr weich." },
+        "rare": { "name": "Saignant (Rare)", "desc": "Kühler roter Kern. Weiche und schwammige Textur." },
+        "medium_rare": { "name": "Medium-Rare", "desc": "Warmer roter Kern. Festere Textur, aromatischer." },
+        "medium": { "name": "Medium", "desc": "Rosafarbener Kern. Feste Textur, beginnender Saftverlust." }
+    },
+    "fishDesc": {
+        "rare": { "name": "Glasig (Rare)", "desc": "Transluzent, weich, sehr saftig. (z.B. Lachs/Thunfisch)" },
+        "medium_rare": { "name": "Medium-Rare", "desc": "Beginnt zu blättern, noch sehr saftig." },
+        "medium": { "name": "Durch (Medium)", "desc": "Fest, blättert leicht, trockener. (Traditionell)" }
+    }
+  },
+  "shelfLife": {
+    "title": "Haltbarkeits- & Lagerungs-Timer",
+    "temp": "Kühlschranktemperatur",
+    "resultHeader": "Maximale Lagerdauer",
+    "suffix": "bei dieser Temperatur.",
+    "error": "Temperatur ist zu hoch für eine sichere Langzeitlagerung."
+  }
+}
