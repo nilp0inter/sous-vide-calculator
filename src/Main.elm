@@ -1,33 +1,38 @@
 port module Main exposing (main)
 
 import Browser
+import Calculators.BrineMarinade
+import Calculators.Doneness
+import Calculators.Heating
+import Calculators.Pasteurization
+import Calculators.RapidChilling
+import Calculators.ShelfLife
+import Data exposing (Data)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
 import Http
-import Data exposing (Data)
-import Translations exposing (Translations)
-
-import Calculators.Heating
-import Calculators.Pasteurization
-import Calculators.RapidChilling
-import Calculators.BrineMarinade
-import Calculators.Doneness
-import Calculators.ShelfLife
 import Introduction
+import Translations exposing (Translations)
+import ViewUtils
+
 
 
 -- PORTS
 
+
 port onHashChange : (String -> msg) -> Sub msg
 
 
+
 -- MAIN
+
 
 type alias Flags =
     { lang : String
     , hash : String
     }
+
 
 main : Program Flags Model Msg
 main =
@@ -37,6 +42,7 @@ main =
         , update = update
         , subscriptions = subscriptions
         }
+
 
 
 -- MODEL
@@ -88,17 +94,22 @@ init flags =
         defaultLang =
             if String.startsWith "es" (String.toLower flags.lang) then
                 Es
+
             else if String.startsWith "fr" (String.toLower flags.lang) then
                 Fr
+
             else if String.startsWith "de" (String.toLower flags.lang) then
                 De
+
             else if String.startsWith "pt" (String.toLower flags.lang) then
                 Pt
+
             else if String.startsWith "fi" (String.toLower flags.lang) then
                 Fi
+
             else
                 En
-        
+
         initialTab =
             hashToTab flags.hash
     in
@@ -135,26 +146,53 @@ fetchTranslations lang =
 languageToFilename : Language -> String
 languageToFilename lang =
     case lang of
-        En -> "en.json"
-        Es -> "es.json"
-        Fr -> "fr.json"
-        De -> "de.json"
-        Pt -> "pt.json"
-        Fi -> "fi.json"
+        En ->
+            "en.json"
+
+        Es ->
+            "es.json"
+
+        Fr ->
+            "fr.json"
+
+        De ->
+            "de.json"
+
+        Pt ->
+            "pt.json"
+
+        Fi ->
+            "fi.json"
+
 
 
 -- ROUTING HELPERS
 
+
 tabToHash : Tab -> String
 tabToHash tab =
     case tab of
-        Introduction -> "introduction"
-        BrineMarinade -> "brine"
-        Doneness -> "doneness"
-        Heating -> "heating"
-        Pasteurization -> "pasteurization"
-        RapidChilling -> "chilling"
-        ShelfLife -> "shelf-life"
+        Introduction ->
+            "introduction"
+
+        BrineMarinade ->
+            "brine"
+
+        Doneness ->
+            "doneness"
+
+        Heating ->
+            "heating"
+
+        Pasteurization ->
+            "pasteurization"
+
+        RapidChilling ->
+            "chilling"
+
+        ShelfLife ->
+            "shelf-life"
+
 
 hashToTab : String -> Tab
 hashToTab hash =
@@ -162,18 +200,35 @@ hashToTab hash =
         cleanHash =
             if String.startsWith "#" hash then
                 String.dropLeft 1 hash
+
             else
                 hash
     in
     case cleanHash of
-        "brine" -> BrineMarinade
-        "doneness" -> Doneness
-        "heating" -> Heating
-        "pasteurization" -> Pasteurization
-        "chilling" -> RapidChilling
-        "shelf-life" -> ShelfLife
-        "introduction" -> Introduction
-        _ -> Introduction
+        "brine" ->
+            BrineMarinade
+
+        "doneness" ->
+            Doneness
+
+        "heating" ->
+            Heating
+
+        "pasteurization" ->
+            Pasteurization
+
+        "chilling" ->
+            RapidChilling
+
+        "shelf-life" ->
+            ShelfLife
+
+        "introduction" ->
+            Introduction
+
+        _ ->
+            Introduction
+
 
 
 -- UPDATE
@@ -203,15 +258,27 @@ update msg model =
             let
                 newLang =
                     case langStr of
-                        "es" -> Es
-                        "fr" -> Fr
-                        "de" -> De
-                        "pt" -> Pt
-                        "fi" -> Fi
-                        _ -> En
+                        "es" ->
+                            Es
+
+                        "fr" ->
+                            Fr
+
+                        "de" ->
+                            De
+
+                        "pt" ->
+                            Pt
+
+                        "fi" ->
+                            Fi
+
+                        _ ->
+                            En
             in
             if newLang == model.currentLanguage then
                 ( model, Cmd.none )
+
             else
                 ( { model | currentLanguage = newLang, translations = Nothing }
                 , fetchTranslations newLang
@@ -237,6 +304,7 @@ update msg model =
             case model.status of
                 Loaded data ->
                     ( { model | heating = Calculators.Heating.update data.heating subMsg model.heating }, Cmd.none )
+
                 _ ->
                     ( model, Cmd.none )
 
@@ -247,6 +315,7 @@ update msg model =
             case model.status of
                 Loaded data ->
                     ( { model | rapidChilling = Calculators.RapidChilling.update data.rapidChilling subMsg model.rapidChilling }, Cmd.none )
+
                 _ ->
                     ( model, Cmd.none )
 
@@ -266,9 +335,11 @@ update msg model =
 
 -- SUBSCRIPTIONS
 
+
 subscriptions : Model -> Sub Msg
 subscriptions _ =
     onHashChange HashChanged
+
 
 
 -- VIEW
@@ -276,18 +347,19 @@ subscriptions _ =
 
 view : Model -> Html Msg
 view model =
-    case (model.status, model.translations) of
-        (Loaded data, Just translations) ->
+    case ( model.status, model.translations ) of
+        ( Loaded data, Just translations ) ->
             viewLoaded data translations model
 
-        (Failed error, _) ->
+        ( Failed error, _ ) ->
             viewError error
-        
-        (_, _) ->
+
+        ( _, _ ) ->
             if model.error /= Nothing then
-                 viewError (Maybe.withDefault Http.Timeout model.error)
+                viewError (Maybe.withDefault Http.Timeout model.error)
+
             else
-                 viewLoading
+                viewLoading
 
 
 viewLoaded : Data -> Translations -> Model -> Html Msg
@@ -348,11 +420,20 @@ viewError error =
     let
         errorMsg =
             case error of
-                Http.BadUrl url -> "Bad URL: " ++ url
-                Http.Timeout -> "Timeout"
-                Http.NetworkError -> "Network Error"
-                Http.BadStatus status -> "Bad Status: " ++ String.fromInt status
-                Http.BadBody body -> "Bad Body: " ++ body
+                Http.BadUrl url ->
+                    "Bad URL: " ++ url
+
+                Http.Timeout ->
+                    "Timeout"
+
+                Http.NetworkError ->
+                    "Network Error"
+
+                Http.BadStatus status ->
+                    "Bad Status: " ++ String.fromInt status
+
+                Http.BadBody body ->
+                    "Bad Body: " ++ body
     in
     div [ class "min-h-screen flex items-center justify-center p-4 bg-gray-50" ]
         [ div [ class "bg-red-50 p-4 rounded-lg text-center shadow" ]
@@ -391,6 +472,7 @@ tabButton tab currentTab label =
         stateClasses =
             if isActive then
                 "border-blue-500 text-blue-600"
+
             else
                 "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
     in
@@ -399,7 +481,13 @@ tabButton tab currentTab label =
         , onClick (SelectTab tab)
         , class (baseClasses ++ " " ++ stateClasses ++ " cursor-pointer")
         , attribute "role" "tab"
-        , attribute "aria-selected" (if isActive then "true" else "false")
+        , attribute "aria-selected"
+            (if isActive then
+                "true"
+
+             else
+                "false"
+            )
         ]
         [ text label ]
 
@@ -436,6 +524,6 @@ viewFooter t =
     footer [ class "bg-white border-t border-gray-200 mt-auto" ]
         [ div [ class "max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8" ]
             [ p [ class "text-center text-sm text-gray-500" ]
-                [ text t.app.footer ]
+                (ViewUtils.parseBody t.app.footer)
             ]
         ]

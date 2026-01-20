@@ -2,7 +2,7 @@
   "app": {
     "title": "Sous Vide -laskin",
     "subtitle": "Baldwinin malli",
-    "footer": "Perustuu tri Douglas Baldwinin teokseen 'A Practical Guide to Sous Vide Cooking'.",
+    "footer": "Perustuu tri Douglas Baldwinin teokseen [https://douglasbaldwin.com/sous-vide.html|A Practical Guide to Sous Vide Cooking].",
     "min": "Min",
     "max": "Maks"
   },
@@ -29,7 +29,7 @@
     "stage4Title": "4. Jäähdytys ja säilytys (Cook-Chill)",
     "stage4Body": "Jos ruokaa ei tarjoilla heti, nopea jäähdytys on välttämätöntä itiöiden kasvun estämiseksi. Määritä jääkylvyn kesto [chilling|Pikajäähdytyslaskimen] avulla. Käytä [shelf-life|Säilyvyys- ja varastointiajastinta] tietääksesi, kuinka kauan pastöroitu ruoka säilyy turvallisena jääkaapissa.",
     "safetyNoteTitle": "Huomautus turvallisuudesta",
-    "safetyNoteBody": "Sous viden elintarviketurvallisuus riippuu sekä lämpötilasta että ajasta. Tämä sovellus käyttää tri Douglas Baldwinin matemaattisia malleja laskemaan vähimmäisajat, jotka tarvitaan taudinaiheuttajien vähentämiseksi turvalliselle tasolle."
+    "safetyNoteBody": "Sous viden elintarviketurvallisuus riippuu sekä lämpötilasta että ajasta. Tämä sovellus käyttää [https://douglasbaldwin.com/sous-vide.html|tri Douglas Baldwinin] matemaattisia malleja laskemaan vähimmäisajat, jotka tarvitaan taudinaiheuttajien vähentämiseksi turvalliselle tasolle."
   },
   "heating": {
     "title": "Kuumennusaikalaskin",

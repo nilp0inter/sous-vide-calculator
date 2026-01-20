@@ -2,7 +2,7 @@
   "app": {
     "title": "Calculadora Sous Vide",
     "subtitle": "Modelo Baldwin",
-    "footer": "Basado en 'Una guía práctica para la cocina Sous Vide' del Dr. Douglas Baldwin.",
+    "footer": "Basado en [https://douglasbaldwin.com/sous-vide.html|A Practical Guide to Sous Vide Cooking] del Dr. Douglas Baldwin.",
     "min": "Mín",
     "max": "Máx"
   },
@@ -29,7 +29,7 @@
     "stage4Title": "4. Enfriamiento y Almacenamiento (Cook-Chill)",
     "stage4Body": "Si no se va a consumir de inmediato, el enfriamiento rápido es esencial para evitar el crecimiento de esporas. Use la [chilling|Calculadora de Enfriamiento Rápido] para determinar los tiempos en baño de hielo. Use el [shelf-life|Temporizador de Vida Útil y Almacenamiento] para saber cuánto tiempo permanece segura su comida pasteurizada en el refrigerador.",
     "safetyNoteTitle": "Una Nota sobre Seguridad",
-    "safetyNoteBody": "La seguridad alimentaria en el sous vide depende tanto de la temperatura como del tiempo. Esta aplicación utiliza los modelos matemáticos del Dr. Douglas Baldwin para calcular los tiempos mínimos requeridos para reducir los patógenos a niveles seguros."
+    "safetyNoteBody": "La seguridad alimentaria en el sous vide depende tanto de la temperatura como del tiempo. Esta aplicación utiliza los modelos matemáticos de [https://douglasbaldwin.com/sous-vide.html|Dr. Douglas Baldwin] para calcular los tiempos mínimos requeridos para reducir los patógenos a niveles seguros."
   },
   "heating": {
     "title": "Calculadora de Tiempo de Calentamiento",
