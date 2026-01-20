@@ -6,6 +6,7 @@ import Html.Events exposing (..)
 import Slider
 import Round
 import Data exposing (PasteurizationData, PasteurizationRow)
+import Translations exposing (PasteurizationStrings, AppStrings)
 
 
 -- MODEL
@@ -104,39 +105,39 @@ getTable data protein =
 -- VIEW
 
 
-view : PasteurizationData -> Model -> Html Msg
-view data model =
+view : PasteurizationData -> PasteurizationStrings -> AppStrings -> Model -> Html Msg
+view data t appT model =
     div [ class "max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm" ]
         [ h2 [ class "text-2xl font-bold mb-6 text-gray-800 border-b pb-2" ]
-            [ text "Pasteurization Calculator" ]
+            [ text t.title ]
         
         , div [ class "grid grid-cols-1 md:grid-cols-2 gap-8" ]
             [ -- Input Section
               div [ class "space-y-6" ]
-                [ viewProteinSelector model.protein
-                , viewThicknessSlider data model
-                , viewTempSlider data model
-                , viewMarinadeToggle model.isAcidicMarinade
+                [ viewProteinSelector t model.protein
+                , viewThicknessSlider data t model
+                , viewTempSlider data t model
+                , viewMarinadeToggle t model.isAcidicMarinade
                 ]
             
             -- Result Section
             , div [ class "bg-blue-50 rounded-lg p-6 flex flex-col justify-center items-center text-center" ]
-                [ h3 [ class "text-lg font-medium text-blue-800 mb-2" ] [ text "Minimum Time" ]
-                , viewResult data model
+                [ h3 [ class "text-lg font-medium text-blue-800 mb-2" ] [ text t.resultHeader ]
+                , viewResult data t model
                 ]
             ]
         ]
 
 
-viewProteinSelector : Protein -> Html Msg
-viewProteinSelector selected =
+viewProteinSelector : PasteurizationStrings -> Protein -> Html Msg
+viewProteinSelector t selected =
     div []
-        [ label [ class "block text-sm font-medium text-gray-700 mb-2" ] [ text "Protein Type" ]
+        [ label [ class "block text-sm font-medium text-gray-700 mb-2" ] [ text t.protein ]
         , div [ class "grid grid-cols-2 gap-3" ]
-            [ proteinButton "Meat (Beef/Pork/Lamb)" Meat selected
-            , proteinButton "Poultry" Poultry selected
-            , proteinButton "Lean Fish" LeanFish selected
-            , proteinButton "Fatty Fish" FattyFish selected
+            [ proteinButton t.meat Meat selected
+            , proteinButton t.poultry Poultry selected
+            , proteinButton t.leanFish LeanFish selected
+            , proteinButton t.fattyFish FattyFish selected
             ]
         ]
 
@@ -160,8 +161,8 @@ proteinButton labelStr protein selected =
         [ text labelStr ]
 
 
-viewThicknessSlider : PasteurizationData -> Model -> Html Msg
-viewThicknessSlider data model =
+viewThicknessSlider : PasteurizationData -> PasteurizationStrings -> Model -> Html Msg
+viewThicknessSlider data t model =
     let
         table = getTable data model.protein
         thicknesses = List.map .thickness table |> List.sort
@@ -174,26 +175,25 @@ viewThicknessSlider data model =
             mm ++ " / " ++ inch
     in
     Slider.view
-        {
-            value = model.thicknessInput
-        ,   allowedValues = thicknesses
-        ,   toMsg = SetThickness
-        ,   label = "Thickness"
-        ,   formatter = formatter
+        { value = model.thicknessInput
+        , allowedValues = thicknesses
+        , toMsg = SetThickness
+        , label = t.thickness
+        , formatter = formatter
         }
 
 
-viewTempSlider : PasteurizationData -> Model -> Html Msg
-viewTempSlider data model =
+viewTempSlider : PasteurizationData -> PasteurizationStrings -> Model -> Html Msg
+viewTempSlider data t model =
     let
         table = getTable data model.protein
         
         -- Extract valid temperatures from the first row (assuming all rows have same temp cols)
         -- The inner list is [(Temp, Time), ...]
-        validTemps =
-            table
-                |> List.head
-                |> Maybe.map .times
+        validTemps = 
+            table 
+                |> List.head 
+                |> Maybe.map .times 
                 |> Maybe.withDefault []
                 |> List.map Tuple.first
                 |> List.sort
@@ -206,17 +206,16 @@ viewTempSlider data model =
             c ++ " / " ++ f
     in
     Slider.view
-        {
-            value = model.tempInput
-        ,   allowedValues = validTemps
-        ,   toMsg = SetTemp
-        ,   label = "Bath Temperature"
-        ,   formatter = formatter
+        { value = model.tempInput
+        , allowedValues = validTemps
+        , toMsg = SetTemp
+        , label = t.temp
+        , formatter = formatter
         }
 
 
-viewMarinadeToggle : Bool -> Html Msg
-viewMarinadeToggle isAcidic =
+viewMarinadeToggle : PasteurizationStrings -> Bool -> Html Msg
+viewMarinadeToggle t isAcidic =
     div [ class "flex items-start" ]
         [ div [ class "flex items-center h-5" ]
             [
@@ -230,14 +229,14 @@ viewMarinadeToggle isAcidic =
                     []
             ]
         , div [ class "ml-3 text-sm" ]
-            [ label [ class "font-medium text-gray-700" ] [ text "Safety Buffer (Acidic Marinade)" ]
-            , p [ class "text-gray-500" ] [ text "Double pasteurization time if using an acidic marinade." ]
+            [ label [ class "font-medium text-gray-700" ] [ text t.safetyBuffer ]
+            , p [ class "text-gray-500" ] [ text t.safetyDesc ]
             ]
         ]
 
 
-viewResult : PasteurizationData -> Model -> Html Msg
-viewResult data model =
+viewResult : PasteurizationData -> PasteurizationStrings -> Model -> Html Msg
+viewResult data t model =
     let
         result =
             getPasteurizationTime data model.protein model.thicknessInput model.tempInput
@@ -263,7 +262,7 @@ viewResult data model =
             div []
                 [ span [ class "text-4xl font-extrabold text-gray-900 block" ] [ text timeString ]
                 , if model.isAcidicMarinade then
-                    span [ class "text-sm text-amber-600 font-medium mt-2 block" ] [ text "(Doubled for safety)" ]
+                    span [ class "text-sm text-amber-600 font-medium mt-2 block" ] [ text t.doubled ]
                   else
                     text ""
                 ]
@@ -271,6 +270,6 @@ viewResult data model =
         Nothing ->
              -- Slider prevents this mostly, but thickness > 70 still possible if we didn't filter logic
             if model.thicknessInput > 70 then
-                 p [ class "text-red-600 font-medium" ] [ text "Thickness exceeds 70mm table limit." ]
+                 p [ class "text-red-600 font-medium" ] [ text t.errorThickness ]
             else
-                 p [ class "text-amber-600 font-medium" ] [ text "Temperature out of range for this protein." ]
+                 p [ class "text-amber-600 font-medium" ] [ text t.errorTemp ]

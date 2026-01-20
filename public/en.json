@@ -1,0 +1,96 @@
+{
+  "app": {
+    "title": "Sous Vide Calculator",
+    "subtitle": "Baldwin Model",
+    "footer": "Based on 'A Practical Guide to Sous Vide Cooking' by Dr. Douglas Baldwin.",
+    "min": "Min",
+    "max": "Max"
+  },
+  "tabs": {
+    "pasteurization": "Pasteurization",
+    "heating": "Heating Time",
+    "rapidChilling": "Rapid Chilling",
+    "brine": "Brine & Marinade",
+    "doneness": "Doneness",
+    "shelfLife": "Shelf Life"
+  },
+  "heating": {
+    "title": "Heating Time Calculator",
+    "startState": "Starting State",
+    "thawed": "Thawed / Fresh",
+    "frozen": "Frozen",
+    "shape": "Shape",
+    "slab": "Slab",
+    "cylinder": "Cylinder",
+    "sphere": "Sphere",
+    "slabDesc": "Steak, Chops",
+    "cylinderDesc": "Roulade, Sausage",
+    "sphereDesc": "Meatball, Roast",
+    "thickness": "Thickness",
+    "resultHeader": "Time to Reach Temperature",
+    "resultSuffix": "to reach 0.5°C (1°F) less than bath temp",
+    "errorThickness": "Thickness out of range."
+  },
+  "pasteurization": {
+    "title": "Pasteurization Calculator",
+    "protein": "Protein Type",
+    "meat": "Meat (Beef/Pork/Lamb)",
+    "poultry": "Poultry",
+    "leanFish": "Lean Fish",
+    "fattyFish": "Fatty Fish",
+    "thickness": "Thickness",
+    "temp": "Bath Temperature",
+    "safetyBuffer": "Safety Buffer (Acidic Marinade)",
+    "safetyDesc": "Double pasteurization time if using an acidic marinade.",
+    "resultHeader": "Minimum Time",
+    "doubled": "(Doubled for safety)",
+    "errorThickness": "Thickness exceeds 70mm table limit.",
+    "errorTemp": "Temperature out of range for this protein."
+  },
+  "rapidChilling": {
+    "title": "Rapid Chilling (Cook-Chill) Calculator",
+    "shape": "Shape",
+    "thickness": "Thickness",
+    "resultHeader": "Cooling Time",
+    "resultSuffix": "in ice water (at least half ice) to reach 5°C (41°F)",
+    "errorThickness": "Thickness out of range."
+  },
+  "brine": {
+    "title": "Brine & Marinade Ratio Tool",
+    "protein": "Protein Type",
+    "porkPoultry": "Pork / Poultry",
+    "brisket": "Brisket",
+    "units": "Input Units",
+    "metric": "Metric (g)",
+    "imperial": "Imperial (oz)",
+    "weightInput": "Weight of Water/Liquid",
+    "resultHeader": "Required Amounts",
+    "salt": "Salt:",
+    "sugar": "Sugar:",
+    "error": "Enter a valid liquid weight..."
+  },
+  "doneness": {
+    "title": "Doneness & Texture Visualizer",
+    "protein": "Protein Type",
+    "meat": "Meat (Beef/Lamb)",
+    "fish": "Fish",
+    "beef": {
+        "very_rare": { "name": "Very-rare", "desc": "Red, raw center. Very soft." },
+        "rare": { "name": "Rare", "desc": "Cool red center. Soft and spongy texture." },
+        "medium_rare": { "name": "Medium-Rare", "desc": "Warm red center. Firmer texture, more savory." },
+        "medium": { "name": "Medium", "desc": "Pink center. Firm texture, significant juice loss starts." }
+    },
+    "fishDesc": {
+        "rare": { "name": "Rare", "desc": "Translucent, soft, very moist. (e.g. Salmon/Tuna)" },
+        "medium_rare": { "name": "Medium-Rare", "desc": "Starting to flake, still very moist." },
+        "medium": { "name": "Medium", "desc": "Firm, flakes easily, drier. (Traditional)" }
+    }
+  },
+  "shelfLife": {
+    "title": "Shelf-Life & Storage Timer",
+    "temp": "Refrigerator Temperature",
+    "resultHeader": "Maximum Storage",
+    "suffix": "at this temperature.",
+    "error": "Temperature is too high for safe extended storage."
+  }
+}

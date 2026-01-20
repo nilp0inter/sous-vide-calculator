@@ -6,6 +6,7 @@ import Html.Events exposing (..)
 import Slider
 import Round
 import Data exposing (ShelfLifeRule)
+import Translations exposing (ShelfLifeStrings, AppStrings)
 
 
 -- MODEL
@@ -52,29 +53,29 @@ getStorageDuration rules tempC =
 -- VIEW
 
 
-view : List ShelfLifeRule -> Model -> Html Msg
-view rules model =
+view : List ShelfLifeRule -> ShelfLifeStrings -> AppStrings -> Model -> Html Msg
+view rules t appT model =
     div [ class "max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm" ]
         [ h2 [ class "text-2xl font-bold mb-6 text-gray-800 border-b pb-2" ]
-            [ text "Shelf-Life & Storage Timer" ]
+            [ text t.title ]
         
         , div [ class "grid grid-cols-1 md:grid-cols-2 gap-8" ]
             [ -- Input Section
               div [ class "space-y-6" ]
-                [ viewFridgeTempSlider rules model
+                [ viewFridgeTempSlider rules t model
                 ]
             
             -- Result Section
             , div [ class "bg-purple-50 rounded-lg p-6 flex flex-col justify-center items-center text-center" ]
-                [ h3 [ class "text-lg font-medium text-purple-800 mb-2" ] [ text "Maximum Storage" ]
-                , viewResult rules model
+                [ h3 [ class "text-lg font-medium text-purple-800 mb-2" ] [ text t.resultHeader ]
+                , viewResult rules t model
                 ]
             ]
         ]
 
 
-viewFridgeTempSlider : List ShelfLifeRule -> Model -> Html Msg
-viewFridgeTempSlider rules model =
+viewFridgeTempSlider : List ShelfLifeRule -> ShelfLifeStrings -> Model -> Html Msg
+viewFridgeTempSlider rules t model =
     let
         -- Extract thresholds from rules and add some intermediate steps if needed
         -- Or just use the thresholds as the snap points + 0.
@@ -106,13 +107,13 @@ viewFridgeTempSlider rules model =
         { value = model.fridgeTempInput
         , allowedValues = allowed
         , toMsg = SetFridgeTemp
-        , label = "Refrigerator Temperature"
+        , label = t.temp
         , formatter = formatter
         }
 
 
-viewResult : List ShelfLifeRule -> Model -> Html Msg
-viewResult rules model =
+viewResult : List ShelfLifeRule -> ShelfLifeStrings -> Model -> Html Msg
+viewResult rules t model =
     let
         result =
             getStorageDuration rules model.fridgeTempInput
@@ -121,8 +122,8 @@ viewResult rules model =
         Just days ->
             div []
                 [ span [ class "text-4xl font-extrabold text-purple-900 block" ] [ text (String.fromInt days ++ " days") ]
-                , p [ class "text-sm text-purple-600 mt-2" ] [ text "at this temperature." ]
+                , p [ class "text-sm text-purple-600 mt-2" ] [ text t.suffix ]
                 ]
 
         Nothing ->
-            p [ class "text-red-600 font-medium" ] [ text "Temperature is too high for safe extended storage." ]
+            p [ class "text-red-600 font-medium" ] [ text t.error ]

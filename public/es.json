@@ -1,0 +1,96 @@
+{
+  "app": {
+    "title": "Calculadora Sous Vide",
+    "subtitle": "Modelo Baldwin",
+    "footer": "Basado en 'Una guía práctica para la cocina Sous Vide' del Dr. Douglas Baldwin.",
+    "min": "Mín",
+    "max": "Máx"
+  },
+  "tabs": {
+    "pasteurization": "Pasteurización",
+    "heating": "Tiempo de Calentamiento",
+    "rapidChilling": "Enfriamiento Rápido",
+    "brine": "Salmuera y Adobo",
+    "doneness": "Punto de Cocción",
+    "shelfLife": "Vida Útil"
+  },
+  "heating": {
+    "title": "Calculadora de Tiempo de Calentamiento",
+    "startState": "Estado Inicial",
+    "thawed": "Descongelado / Fresco",
+    "frozen": "Congelado",
+    "shape": "Forma",
+    "slab": "Placa",
+    "cylinder": "Cilindro",
+    "sphere": "Esfera",
+    "slabDesc": "Filete, Chuletas",
+    "cylinderDesc": "Rollo, Salchicha",
+    "sphereDesc": "Albóndiga, Asado",
+    "thickness": "Grosor",
+    "resultHeader": "Tiempo para Alcanzar Temperatura",
+    "resultSuffix": "para llegar a 0.5°C (1°F) menos que la temp. del baño",
+    "errorThickness": "El grosor está fuera del rango."
+  },
+  "pasteurization": {
+    "title": "Calculadora de Pasteurización",
+    "protein": "Tipo de Proteína",
+    "meat": "Carne (Res/Cerdo/Cordero)",
+    "poultry": "Aves",
+    "leanFish": "Pescado Magro",
+    "fattyFish": "Pescado Graso",
+    "thickness": "Grosor",
+    "temp": "Temperatura del Baño",
+    "safetyBuffer": "Margen de Seguridad (Adobo Ácido)",
+    "safetyDesc": "Duplicar tiempo de pasteurización si se usa adobo ácido.",
+    "resultHeader": "Tiempo Mínimo",
+    "doubled": "(Duplicado por seguridad)",
+    "errorThickness": "El grosor excede el límite de 70mm de la tabla.",
+    "errorTemp": "Temperatura fuera de rango para esta proteína."
+  },
+  "rapidChilling": {
+    "title": "Calculadora de Enfriamiento Rápido (Cook-Chill)",
+    "shape": "Forma",
+    "thickness": "Grosor",
+    "resultHeader": "Tiempo de Enfriamiento",
+    "resultSuffix": "en agua con hielo (mínimo mitad hielo) para llegar a 5°C (41°F)",
+    "errorThickness": "El grosor está fuera del rango."
+  },
+  "brine": {
+    "title": "Herramienta de Proporción de Salmuera y Adobo",
+    "protein": "Tipo de Proteína",
+    "porkPoultry": "Cerdo / Aves",
+    "brisket": "Pecho de Res (Brisket)",
+    "units": "Unidades de Entrada",
+    "metric": "Métrico (g)",
+    "imperial": "Imperial (oz)",
+    "weightInput": "Peso del Agua/Líquido",
+    "resultHeader": "Cantidades Requeridas",
+    "salt": "Sal:",
+    "sugar": "Azúcar:",
+    "error": "Ingrese un peso de líquido válido..."
+  },
+  "doneness": {
+    "title": "Visualizador de Punto y Textura",
+    "protein": "Tipo de Proteína",
+    "meat": "Carne (Res/Cordero)",
+    "fish": "Pescado",
+    "beef": {
+        "very_rare": { "name": "Muy poco hecho (Bleu)", "desc": "Centro rojo y crudo. Muy blando." },
+        "rare": { "name": "Poco hecho (Rare)", "desc": "Centro rojo frío. Textura suave y esponjosa." },
+        "medium_rare": { "name": "Al punto (Medium-Rare)", "desc": "Centro rojo tibio. Textura más firme, más sabroso." },
+        "medium": { "name": "Hecho (Medium)", "desc": "Centro rosado. Textura firme, comienza pérdida significativa de jugos." }
+    },
+    "fishDesc": {
+        "rare": { "name": "Poco hecho", "desc": "Translúcido, suave, muy húmedo. (ej. Salmón/Atún)" },
+        "medium_rare": { "name": "Al punto", "desc": "Comienza a desmenuzarse, aún muy húmedo." },
+        "medium": { "name": "Hecho", "desc": "Firme, se desmenuza fácilmente, más seco. (Tradicional)" }
+    }
+  },
+  "shelfLife": {
+    "title": "Temporizador de Vida Útil y Almacenamiento",
+    "temp": "Temperatura del Refrigerador",
+    "resultHeader": "Almacenamiento Máximo",
+    "suffix": "a esta temperatura.",
+    "error": "Temperatura demasiado alta para almacenamiento seguro extendido."
+  }
+}

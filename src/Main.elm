@@ -3,9 +3,10 @@ module Main exposing (main)
 import Browser
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onClick)
+import Html.Events exposing (onClick, onInput)
 import Http
 import Data exposing (Data)
+import Translations exposing (Translations)
 
 import Calculators.Heating
 import Calculators.Pasteurization
@@ -18,64 +19,253 @@ import Calculators.ShelfLife
 -- MAIN
 
 
-main : Program () Model Msg
+main : Program String Model Msg
+
+
 main =
+
+
     Browser.element
+
+
         { init = init
+
+
         , view = view
+
+
         , update = update
+
+
         , subscriptions = \_ -> Sub.none
+
+
         }
+
+
+
+
+
+
+
+
 
 
 
 -- MODEL
 
 
+
+
+
+
+
+
 type Tab
+
+
     = Pasteurization
+
+
     | Heating
+
+
     | RapidChilling
+
+
     | BrineMarinade
+
+
     | Doneness
+
+
     | ShelfLife
 
 
+
+
+
+
+
+
 type Status
+
+
     = Loading
+
+
     | Failed Http.Error
+
+
     | Loaded Data
 
 
+
+
+
+
+
+
+type Language
+
+
+    = En
+
+
+    | Es
+
+
+
+
+
+
+
+
 type alias Model =
+
+
     { activeTab : Tab
+
+
     , status : Status
+
+
+    , translations : Maybe Translations
+
+
+    , currentLanguage : Language
+
+
+    , error : Maybe Http.Error
+
+
     , heating : Calculators.Heating.Model
+
+
     , pasteurization : Calculators.Pasteurization.Model
+
+
     , rapidChilling : Calculators.RapidChilling.Model
+
+
     , brineMarinade : Calculators.BrineMarinade.Model
+
+
     , doneness : Calculators.Doneness.Model
+
+
     , shelfLife : Calculators.ShelfLife.Model
+
+
     }
 
 
-init : () -> ( Model, Cmd Msg )
-init _ =
+
+
+
+
+
+
+init : String -> ( Model, Cmd Msg )
+
+
+init langFlag =
+
+
+    let
+
+
+        defaultLang =
+
+
+            if String.startsWith "es" (String.toLower langFlag) then
+
+
+                Es
+
+
+            else
+
+
+                En
+
+
+    in
+
+
     ( { activeTab = Pasteurization
+
+
       , status = Loading
+
+
+      , translations = Nothing
+
+
+      , currentLanguage = defaultLang
+
+
+      , error = Nothing
+
+
       , heating = Calculators.Heating.init
+
+
       , pasteurization = Calculators.Pasteurization.init
+
+
       , rapidChilling = Calculators.RapidChilling.init
+
+
       , brineMarinade = Calculators.BrineMarinade.init
+
+
       , doneness = Calculators.Doneness.init
+
+
       , shelfLife = Calculators.ShelfLife.init
+
+
       }
-    , Http.get
-        { url = "data.json"
-        , expect = Http.expectJson GotData Data.dataDecoder
-        }
+
+
+    , Cmd.batch
+
+
+        [ Http.get
+
+
+            { url = "data.json"
+
+
+            , expect = Http.expectJson GotData Data.dataDecoder
+
+
+            }
+
+
+        , fetchTranslations defaultLang
+
+
+        ]
+
+
     )
 
+
+fetchTranslations : Language -> Cmd Msg
+fetchTranslations lang =
+    Http.get
+        { url = languageToFilename lang
+        , expect = Http.expectJson GotTranslations Translations.translationsDecoder
+        }
+
+
+languageToFilename : Language -> String
+languageToFilename lang =
+    case lang of
+        En -> "en.json"
+        Es -> "es.json"
 
 
 -- UPDATE
@@ -83,7 +273,9 @@ init _ =
 
 type Msg
     = SelectTab Tab
+    | SetLanguage String
     | GotData (Result Http.Error Data)
+    | GotTranslations (Result Http.Error Translations)
     | HeatingMsg Calculators.Heating.Msg
     | PasteurizationMsg Calculators.Pasteurization.Msg
     | RapidChillingMsg Calculators.RapidChilling.Msg
@@ -98,6 +290,20 @@ update msg model =
         SelectTab tab ->
             ( { model | activeTab = tab }, Cmd.none )
 
+        SetLanguage langStr ->
+            let
+                newLang =
+                    case langStr of
+                        "es" -> Es
+                        _ -> En
+            in
+            if newLang == model.currentLanguage then
+                ( model, Cmd.none )
+            else
+                ( { model | currentLanguage = newLang, translations = Nothing }
+                , fetchTranslations newLang
+                )
+
         GotData result ->
             case result of
                 Ok data ->
@@ -105,6 +311,14 @@ update msg model =
 
                 Err error ->
                     ( { model | status = Failed error }, Cmd.none )
+
+        GotTranslations result ->
+            case result of
+                Ok translations ->
+                    ( { model | translations = Just translations }, Cmd.none )
+
+                Err error ->
+                    ( { model | error = Just error }, Cmd.none )
 
         HeatingMsg subMsg ->
             case model.status of
@@ -139,44 +353,64 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
+    case (model.status, model.translations) of
+        (Loaded data, Just translations) ->
+            viewLoaded data translations model
+
+        (Failed error, _) ->
+            viewError error
+        
+        (_, _) ->
+            if model.error /= Nothing then
+                 viewError (Maybe.withDefault Http.Timeout model.error)
+            else
+                 viewLoading
+
+
+viewLoaded : Data -> Translations -> Model -> Html Msg
+viewLoaded data translations model =
     div [ class "min-h-screen bg-gray-50 flex flex-col font-sans" ]
-        [ viewHeader
-        , case model.status of
-            Loading ->
-                viewLoading
-
-            Failed error ->
-                viewError error
-
-            Loaded data ->
-                div [ class "flex-grow flex flex-col" ]
-                    [ viewTabs model
-                    , viewContent data model
-                    ]
-        , viewFooter
+        [ viewHeader translations model.currentLanguage
+        , viewTabs translations model
+        , viewContent data translations model
+        , viewFooter translations
         ]
 
 
-viewHeader : Html Msg
-viewHeader =
+viewHeader : Translations -> Language -> Html Msg
+viewHeader t currentLang =
     header [ class "bg-white shadow-sm sticky top-0 z-10" ]
         [ div [ class "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between" ]
             [ div [ class "flex items-center" ]
                 [ h1 [ class "text-xl font-bold text-gray-900 tracking-tight" ]
-                    [ text "Sous Vide Calculator" ]
+                    [ text t.app.title ]
                 , span [ class "ml-3 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 hidden sm:inline-block" ]
-                    [ text "Baldwin Model" ]
+                    [ text t.app.subtitle ]
                 ]
+            , viewLanguageSelector currentLang
+            ]
+        ]
+
+
+viewLanguageSelector : Language -> Html Msg
+viewLanguageSelector currentLang =
+    div [ class "relative" ]
+        [ select
+            [ onInput SetLanguage
+            , class "block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            ]
+            [ option [ value "en", selected (currentLang == En) ] [ text "English" ]
+            , option [ value "es", selected (currentLang == Es) ] [ text "Español" ]
             ]
         ]
 
 
 viewLoading : Html Msg
 viewLoading =
-    div [ class "flex-grow flex items-center justify-center" ]
+    div [ class "min-h-screen flex items-center justify-center bg-gray-50" ]
         [ div [ class "text-center" ]
             [ div [ class "inline-block animate-spin rounded-full h-8 w-8 border-4 border-gray-300 border-t-indigo-600 mb-4" ] []
-            , p [ class "text-gray-500" ] [ text "Loading data..." ]
+            , p [ class "text-gray-500" ] [ text "Loading resources..." ]
             ]
         ]
 
@@ -192,25 +426,25 @@ viewError error =
                 Http.BadStatus status -> "Bad Status: " ++ String.fromInt status
                 Http.BadBody body -> "Bad Body: " ++ body
     in
-    div [ class "flex-grow flex items-center justify-center p-4" ]
-        [ div [ class "bg-red-50 p-4 rounded-lg text-center" ]
-            [ h3 [ class "text-red-800 font-bold mb-2" ] [ text "Failed to load data" ]
+    div [ class "min-h-screen flex items-center justify-center p-4 bg-gray-50" ]
+        [ div [ class "bg-red-50 p-4 rounded-lg text-center shadow" ]
+            [ h3 [ class "text-red-800 font-bold mb-2" ] [ text "Failed to load resources" ]
             , p [ class "text-red-600" ] [ text errorMsg ]
             ]
         ]
 
 
-viewTabs : Model -> Html Msg
-viewTabs model =
+viewTabs : Translations -> Model -> Html Msg
+viewTabs t model =
     div [ class "bg-white border-b border-gray-200 overflow-x-auto scrollbar-hide" ]
         [ div [ class "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" ]
             [ nav [ class "-mb-px flex space-x-6 sm:space-x-8", attribute "aria-label" "Tabs" ]
-                [ tabButton Pasteurization model.activeTab "Pasteurization"
-                , tabButton Heating model.activeTab "Heating Time"
-                , tabButton RapidChilling model.activeTab "Rapid Chilling"
-                , tabButton BrineMarinade model.activeTab "Brine & Marinade"
-                , tabButton Doneness model.activeTab "Doneness"
-                , tabButton ShelfLife model.activeTab "Shelf Life"
+                [ tabButton Pasteurization model.activeTab t.tabs.pasteurization
+                , tabButton Heating model.activeTab t.tabs.heating
+                , tabButton RapidChilling model.activeTab t.tabs.rapidChilling
+                , tabButton BrineMarinade model.activeTab t.tabs.brine
+                , tabButton Doneness model.activeTab t.tabs.doneness
+                , tabButton ShelfLife model.activeTab t.tabs.shelfLife
                 ]
             ]
         ]
@@ -238,35 +472,35 @@ tabButton tab currentTab label =
         [ text label ]
 
 
-viewContent : Data -> Model -> Html Msg
-viewContent data model =
+viewContent : Data -> Translations -> Model -> Html Msg
+viewContent data t model =
     main_ [ class "flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8" ]
         [ case model.activeTab of
             Heating ->
-                Html.map HeatingMsg (Calculators.Heating.view data.heating model.heating)
+                Html.map HeatingMsg (Calculators.Heating.view data.heating t.heating t.app model.heating)
 
             Pasteurization ->
-                Html.map PasteurizationMsg (Calculators.Pasteurization.view data.pasteurization model.pasteurization)
+                Html.map PasteurizationMsg (Calculators.Pasteurization.view data.pasteurization t.pasteurization t.app model.pasteurization)
 
             RapidChilling ->
-                Html.map RapidChillingMsg (Calculators.RapidChilling.view data.rapidChilling model.rapidChilling)
+                Html.map RapidChillingMsg (Calculators.RapidChilling.view data.rapidChilling t.rapidChilling t.heating t.app model.rapidChilling)
 
             BrineMarinade ->
-                Html.map BrineMarinadeMsg (Calculators.BrineMarinade.view data.brine model.brineMarinade)
+                Html.map BrineMarinadeMsg (Calculators.BrineMarinade.view data.brine t.brine model.brineMarinade)
 
             Doneness ->
-                Html.map DonenessMsg (Calculators.Doneness.view data.doneness model.doneness)
+                Html.map DonenessMsg (Calculators.Doneness.view data.doneness t.doneness model.doneness)
 
             ShelfLife ->
-                Html.map ShelfLifeMsg (Calculators.ShelfLife.view data.shelfLife model.shelfLife)
+                Html.map ShelfLifeMsg (Calculators.ShelfLife.view data.shelfLife t.shelfLife t.app model.shelfLife)
         ]
 
 
-viewFooter : Html msg
-viewFooter =
+viewFooter : Translations -> Html msg
+viewFooter t =
     footer [ class "bg-white border-t border-gray-200 mt-auto" ]
         [ div [ class "max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8" ]
             [ p [ class "text-center text-sm text-gray-500" ]
-                [ text "Based on 'A Practical Guide to Sous Vide Cooking' by Dr. Douglas Baldwin." ]
+                [ text t.app.footer ]
             ]
         ]

@@ -6,6 +6,7 @@ import Html.Events exposing (..)
 import Slider
 import Round
 import Data exposing (HeatingData, HeatingRow)
+import Translations exposing (HeatingStrings, AppStrings)
 
 
 -- MODEL
@@ -118,36 +119,36 @@ getHeatingTime data state shape thickness =
 -- VIEW
 
 
-view : HeatingData -> Model -> Html Msg
-view data model =
+view : HeatingData -> HeatingStrings -> AppStrings -> Model -> Html Msg
+view data t appT model =
     div [ class "max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm" ]
         [ h2 [ class "text-2xl font-bold mb-6 text-gray-800 border-b pb-2" ]
-            [ text "Heating Time Calculator" ]
+            [ text t.title ]
         
         , div [ class "grid grid-cols-1 md:grid-cols-2 gap-8" ]
             [ -- Input Section
               div [ class "space-y-6" ]
-                [ viewStateSelector model.startState
-                , viewShapeSelector model.shape
-                , viewThicknessSlider data model
+                [ viewStateSelector t model.startState
+                , viewShapeSelector t model.shape
+                , viewThicknessSlider data t model
                 ]
             
             -- Result Section
             , div [ class "bg-indigo-50 rounded-lg p-6 flex flex-col justify-center items-center text-center" ]
-                [ h3 [ class "text-lg font-medium text-indigo-800 mb-2" ] [ text "Time to Reach Temperature" ]
-                , viewResult data model
+                [ h3 [ class "text-lg font-medium text-indigo-800 mb-2" ] [ text t.resultHeader ]
+                , viewResult data t model
                 ]
             ]
         ]
 
 
-viewStateSelector : StartState -> Html Msg
-viewStateSelector selected =
+viewStateSelector : HeatingStrings -> StartState -> Html Msg
+viewStateSelector t selected =
     div []
-        [ label [ class "block text-sm font-medium text-gray-700 mb-2" ] [ text "Starting State" ]
+        [ label [ class "block text-sm font-medium text-gray-700 mb-2" ] [ text t.startState ]
         , div [ class "flex rounded-md shadow-sm" ]
-            [ stateButton "Thawed / Fresh" Thawed selected "rounded-l-md"
-            , stateButton "Frozen" Frozen selected "rounded-r-md"
+            [ stateButton t.thawed Thawed selected "rounded-l-md"
+            , stateButton t.frozen Frozen selected "rounded-r-md"
             ]
         ]
 
@@ -171,14 +172,14 @@ stateButton labelStr state selected roundedClass =
         [ text labelStr ]
 
 
-viewShapeSelector : Shape -> Html Msg
-viewShapeSelector selected =
+viewShapeSelector : HeatingStrings -> Shape -> Html Msg
+viewShapeSelector t selected =
     div []
-        [ label [ class "block text-sm font-medium text-gray-700 mb-2" ] [ text "Shape" ]
+        [ label [ class "block text-sm font-medium text-gray-700 mb-2" ] [ text t.shape ]
         , div [ class "grid grid-cols-1 gap-3 sm:grid-cols-3" ]
-            [ shapeButton "Slab" Slab selected "Steak, Chops"
-            , shapeButton "Cylinder" Cylinder selected "Roulade, Sausage"
-            , shapeButton "Sphere" Sphere selected "Meatball, Roast"
+            [ shapeButton t.slab Slab selected t.slabDesc
+            , shapeButton t.cylinder Cylinder selected t.cylinderDesc
+            , shapeButton t.sphere Sphere selected t.sphereDesc
             ]
         ]
 
@@ -204,8 +205,8 @@ shapeButton labelStr shape selected description =
         ]
 
 
-viewThicknessSlider : HeatingData -> Model -> Html Msg
-viewThicknessSlider data model =
+viewThicknessSlider : HeatingData -> HeatingStrings -> Model -> Html Msg
+viewThicknessSlider data t model =
     let
         maxT = getMaxThickness data model.startState model.shape
         
@@ -219,7 +220,7 @@ viewThicknessSlider data model =
                 |> List.map (.thickness >> toFloat)
         
         allowed = 
-            List.filter (\t -> t <= toFloat maxT) allThicknesses
+            List.filter (\thickness -> thickness <= toFloat maxT) allThicknesses
 
         formatter val =
             let
@@ -232,13 +233,13 @@ viewThicknessSlider data model =
         { value = model.thicknessInput
         , allowedValues = allowed
         , toMsg = SetThickness
-        , label = "Thickness"
+        , label = t.thickness
         , formatter = formatter
         }
 
 
-viewResult : HeatingData -> Model -> Html Msg
-viewResult data model =
+viewResult : HeatingData -> HeatingStrings -> Model -> Html Msg
+viewResult data t model =
     let
         result =
             getHeatingTime data model.startState model.shape model.thicknessInput
@@ -257,10 +258,8 @@ viewResult data model =
             in
             div []
                 [ span [ class "text-4xl font-extrabold text-indigo-900 block" ] [ text timeString ]
-                , span [ class "text-sm text-indigo-600 mt-2 block" ] [ text "to reach 0.5°C (1°F) less than bath temp" ]
+                , span [ class "text-sm text-indigo-600 mt-2 block" ] [ text t.resultSuffix ]
                 ]
 
         Nothing ->
-             -- Should not happen with slider limits, but safe to keep
-            p [ class "text-red-600 font-medium" ] [ text "Thickness out of range." ]
-
+            p [ class "text-red-600 font-medium" ] [ text t.errorThickness ]

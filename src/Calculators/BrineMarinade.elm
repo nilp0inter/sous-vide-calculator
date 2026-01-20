@@ -5,6 +5,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Round
 import Data exposing (BrineData, BrineRatios)
+import Translations exposing (BrineStrings)
 
 
 -- MODEL
@@ -124,36 +125,36 @@ calculateAmounts data model =
 -- VIEW
 
 
-view : BrineData -> Model -> Html Msg
-view data model =
+view : BrineData -> BrineStrings -> Model -> Html Msg
+view data t model =
     div [ class "max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm" ]
         [ h2 [ class "text-2xl font-bold mb-6 text-gray-800 border-b pb-2" ]
-            [ text "Brine & Marinade Ratio Tool" ]
+            [ text t.title ]
         
         , div [ class "grid grid-cols-1 md:grid-cols-2 gap-8" ]
             [ -- Input Section
               div [ class "space-y-6" ]
-                [ viewProteinTypeSelector model.proteinType
-                , viewUnitSelector model.units
-                , viewLiquidWeightInput model
+                [ viewProteinTypeSelector t model.proteinType
+                , viewUnitSelector t model.units
+                , viewLiquidWeightInput t model
                 ]
             
             -- Result Section
             , div [ class "bg-yellow-50 rounded-lg p-6 flex flex-col justify-center items-center text-center" ]
-                [ h3 [ class "text-lg font-medium text-yellow-800 mb-2" ] [ text "Required Amounts" ]
-                , viewResult data model
+                [ h3 [ class "text-lg font-medium text-yellow-800 mb-2" ] [ text t.resultHeader ]
+                , viewResult t data model
                 ]
             ]
         ]
 
 
-viewProteinTypeSelector : ProteinType -> Html Msg
-viewProteinTypeSelector selected =
+viewProteinTypeSelector : BrineStrings -> ProteinType -> Html Msg
+viewProteinTypeSelector t selected =
     div []
-        [ label [ class "block text-sm font-medium text-gray-700 mb-2" ] [ text "Protein Type" ]
+        [ label [ class "block text-sm font-medium text-gray-700 mb-2" ] [ text t.protein ]
         , div [ class "flex rounded-md shadow-sm" ]
-            [ proteinTypeButton "Pork / Poultry" PorkPoultry selected "rounded-l-md"
-            , proteinTypeButton "Brisket" Brisket selected "rounded-r-md"
+            [ proteinTypeButton t.porkPoultry PorkPoultry selected "rounded-l-md"
+            , proteinTypeButton t.brisket Brisket selected "rounded-r-md"
             ]
         ]
 
@@ -177,13 +178,13 @@ proteinTypeButton labelStr pType selected roundedClass =
         [ text labelStr ]
 
 
-viewUnitSelector : UnitSystem -> Html Msg
-viewUnitSelector selected =
+viewUnitSelector : BrineStrings -> UnitSystem -> Html Msg
+viewUnitSelector t selected =
     div []
-        [ label [ class "block text-sm font-medium text-gray-700 mb-2" ] [ text "Input Units" ]
+        [ label [ class "block text-sm font-medium text-gray-700 mb-2" ] [ text t.units ]
         , div [ class "flex rounded-md shadow-sm max-w-xs" ]
-            [ unitButton "Metric (g)" Metric selected "rounded-l-md"
-            , unitButton "Imperial (oz)" Imperial selected "rounded-r-md"
+            [ unitButton t.metric Metric selected "rounded-l-md"
+            , unitButton t.imperial Imperial selected "rounded-r-md"
             ]
         ]
 
@@ -207,14 +208,14 @@ unitButton labelStr unit selected roundedClass =
         [ text labelStr ]
 
 
-viewLiquidWeightInput : Model -> Html Msg
-viewLiquidWeightInput model =
+viewLiquidWeightInput : BrineStrings -> Model -> Html Msg
+viewLiquidWeightInput t model =
     let
         unit = if model.units == Metric then "g" else "oz"
         placeholderStr = if model.units == Metric then "e.g., 1000" else "e.g., 35.27"
     in
     div []
-        [ label [ class "block text-sm font-medium text-gray-700 mb-1" ] [ text ("Weight of Water/Liquid (" ++ unit ++ ")") ]
+        [ label [ class "block text-sm font-medium text-gray-700 mb-1" ] [ text (t.weightInput ++ " (" ++ unit ++ ")") ]
         , div [ class "relative rounded-md shadow-sm" ]
             [ input
                 [ type_ "number"
@@ -231,8 +232,8 @@ viewLiquidWeightInput model =
         ]
 
 
-viewResult : BrineData -> Model -> Html Msg
-viewResult data model =
+viewResult : BrineStrings -> BrineData -> Model -> Html Msg
+viewResult t data model =
     let
         formatGrams g = String.fromFloat (round2dp g) ++ " g"
         formatOz g = String.fromFloat (round2dp (g / 28.3495)) ++ " oz"
@@ -249,7 +250,7 @@ viewResult data model =
             div [ class "space-y-4 text-left inline-block" ]
                 [ if model.proteinType == PorkPoultry then
                     div []
-                        [ p [ class "font-bold text-gray-900" ] [ text "Salt:" ]
+                        [ p [ class "font-bold text-gray-900" ] [ text t.salt ]
                         , p [ class "text-gray-800" ] 
                             [ text (formatGrams saltMin ++ " - " ++ formatGrams saltMax) ]
                         , p [ class "text-gray-500 text-xs" ] 
@@ -257,13 +258,13 @@ viewResult data model =
                         ]
                   else
                     div []
-                        [ p [ class "font-bold text-gray-900" ] [ text "Salt:" ]
+                        [ p [ class "font-bold text-gray-900" ] [ text t.salt ]
                         , p [ class "text-gray-800" ] [ text (formatGrams saltMin) ]
                         , p [ class "text-gray-500 text-xs" ] [ text (formatOz saltMin) ]
                         ]
                 , if sugar > 0 then
                     div []
-                        [ p [ class "font-bold text-gray-900" ] [ text "Sugar:" ]
+                        [ p [ class "font-bold text-gray-900" ] [ text t.sugar ]
                         , p [ class "text-gray-800" ] [ text (formatGrams sugar) ]
                         , p [ class "text-gray-500 text-xs" ] [ text (formatOz sugar) ]
                         ]
@@ -272,4 +273,4 @@ viewResult data model =
                 ]
 
         Nothing ->
-            p [ class "text-gray-400 italic" ] [ text "Enter a valid liquid weight..." ]
+            p [ class "text-gray-400 italic" ] [ text t.error ]

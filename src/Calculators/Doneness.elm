@@ -4,6 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Data exposing (DonenessData, DonenessLevel)
+import Translations exposing (DonenessStrings)
 
 
 -- MODEL
@@ -47,17 +48,17 @@ getDonenessLevels data protein =
         Fish -> data.fish
 
 
-getLabels : Protein -> String -> (String, String)
-getLabels protein id =
+getLabels : DonenessStrings -> Protein -> String -> (String, String)
+getLabels t protein id =
     case (protein, id) of
-        (Beef, "very_rare") -> ("Very-rare", "Red, raw center. Very soft.")
-        (Beef, "rare") -> ("Rare", "Cool red center. Soft and spongy texture.")
-        (Beef, "medium_rare") -> ("Medium-Rare", "Warm red center. Firmer texture, more savory.")
-        (Beef, "medium") -> ("Medium", "Pink center. Firm texture, significant juice loss starts.")
+        (Beef, "very_rare") -> (t.beef.very_rare.name, t.beef.very_rare.desc)
+        (Beef, "rare") -> (t.beef.rare.name, t.beef.rare.desc)
+        (Beef, "medium_rare") -> (t.beef.medium_rare.name, t.beef.medium_rare.desc)
+        (Beef, "medium") -> (t.beef.medium.name, t.beef.medium.desc)
         
-        (Fish, "rare") -> ("Rare", "Translucent, soft, very moist. (e.g. Salmon/Tuna)")
-        (Fish, "medium_rare") -> ("Medium-Rare", "Starting to flake, still very moist.")
-        (Fish, "medium") -> ("Medium", "Firm, flakes easily, drier. (Traditional)")
+        (Fish, "rare") -> (t.fishDesc.rare.name, t.fishDesc.rare.desc)
+        (Fish, "medium_rare") -> (t.fishDesc.medium_rare.name, t.fishDesc.medium_rare.desc)
+        (Fish, "medium") -> (t.fishDesc.medium.name, t.fishDesc.medium.desc)
         
         -- Fallback
         (_, _) -> (id, "")
@@ -66,28 +67,28 @@ getLabels protein id =
 -- VIEW
 
 
-view : DonenessData -> Model -> Html Msg
-view data model =
+view : DonenessData -> DonenessStrings -> Model -> Html Msg
+view data t model =
     div [ class "max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm" ]
         [ h2 [ class "text-2xl font-bold mb-6 text-gray-800 border-b pb-2" ]
-            [ text "Doneness & Texture Visualizer" ]
+            [ text t.title ]
         
         , div [ class "mb-8" ]
-            [ viewProteinSelector model.protein
+            [ viewProteinSelector t model.protein
             ]
         
         , div [ class "grid grid-cols-1 md:grid-cols-3 gap-6" ]
-            (List.map (viewDonenessCard model.protein) (getDonenessLevels data model.protein))
+            (List.map (viewDonenessCard t model.protein) (getDonenessLevels data model.protein))
         ]
 
 
-viewProteinSelector : Protein -> Html Msg
-viewProteinSelector selected =
+viewProteinSelector : DonenessStrings -> Protein -> Html Msg
+viewProteinSelector t selected =
     div []
-        [ label [ class "block text-sm font-medium text-gray-700 mb-2" ] [ text "Protein Type" ]
+        [ label [ class "block text-sm font-medium text-gray-700 mb-2" ] [ text t.protein ]
         , div [ class "flex rounded-md shadow-sm max-w-sm" ]
-            [ proteinButton "Meat (Beef/Lamb)" Beef selected "rounded-l-md"
-            , proteinButton "Fish" Fish selected "rounded-r-md"
+            [ proteinButton t.meat Beef selected "rounded-l-md"
+            , proteinButton t.fish Fish selected "rounded-r-md"
             ]
         ]
 
@@ -111,10 +112,10 @@ proteinButton labelStr protein selected roundedClass =
         [ text labelStr ]
 
 
-viewDonenessCard : Protein -> DonenessLevel -> Html Msg
-viewDonenessCard protein level =
+viewDonenessCard : DonenessStrings -> Protein -> DonenessLevel -> Html Msg
+viewDonenessCard t protein level =
     let
-        (name, desc) = getLabels protein level.id
+        (name, desc) = getLabels t protein level.id
         
         tempString =
             String.fromFloat level.tempC ++ "°C / " ++ String.fromInt level.tempF ++ "°F"
