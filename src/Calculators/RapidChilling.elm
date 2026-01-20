@@ -5,6 +5,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Slider
 import Round
+import Data exposing (ChillingRow)
 
 
 -- MODEL
@@ -34,12 +35,12 @@ type Msg
     | SetThickness Float
 
 
-update : Msg -> Model -> Model
-update msg model =
+update : List ChillingRow -> Msg -> Model -> Model
+update data msg model =
     case msg of
         SetShape shape ->
             let
-                maxT = getMaxThickness shape
+                maxT = getMaxThickness data shape
                 newThickness = Basics.min model.thicknessInput (toFloat maxT)
             in
             { model | shape = shape, thicknessInput = newThickness }
@@ -48,12 +49,20 @@ update msg model =
             { model | thicknessInput = val }
 
 
-getMaxThickness : Shape -> Int
-getMaxThickness shape =
-    case shape of
-        Slab -> 75
-        Cylinder -> 110
-        Sphere -> 115
+getMaxThickness : List ChillingRow -> Shape -> Int
+getMaxThickness data shape =
+    let
+        hasValue row =
+            case shape of
+                Slab -> row.slab /= Nothing
+                Cylinder -> row.cylinder /= Nothing
+                Sphere -> row.sphere /= Nothing
+    in
+    data
+        |> List.filter hasValue
+        |> List.map .thickness
+        |> List.maximum
+        |> Maybe.withDefault 0
 
 
 -- DATA
@@ -62,10 +71,10 @@ getMaxThickness shape =
 {-| Returns cooling time in minutes.
     Logic: Round thickness UP to nearest 5mm in table.
 -}
-getCoolingTime : Shape -> Float -> Maybe Int
-getCoolingTime shape thickness =
+getCoolingTime : List ChillingRow -> Shape -> Float -> Maybe Int
+getCoolingTime data shape thickness =
     let
-        maxThickness = getMaxThickness shape
+        maxThickness = getMaxThickness data shape
 
         safeThickness = round thickness
         
@@ -80,53 +89,17 @@ getCoolingTime shape thickness =
     if safeThickness > maxThickness then
         Nothing
     else
-        table1_1
+        data
             |> List.filter (\row -> row.thickness == safeThickness)
             |> List.head
             |> Maybe.andThen getColumn
-
-type alias TableRow =
-    { thickness : Int
-    , slab : Maybe Int
-    , cylinder : Maybe Int
-    , sphere : Maybe Int
-    }
-
-
--- Table 1.1: Cooling Time to 41°F (5°C) in Ice Water
-table1_1 : List TableRow
-table1_1 =
-    [ { thickness = 5, slab = Just 5, cylinder = Just 3, sphere = Just 3 }
-    , { thickness = 10, slab = Just 14, cylinder = Just 8, sphere = Just 6 }
-    , { thickness = 15, slab = Just 25, cylinder = Just 14, sphere = Just 10 }
-    , { thickness = 20, slab = Just 35, cylinder = Just 20, sphere = Just 15 }
-    , { thickness = 25, slab = Just 50, cylinder = Just 30, sphere = Just 20 }
-    , { thickness = 30, slab = Just 75, cylinder = Just 40, sphere = Just 30 }
-    , { thickness = 35, slab = Just 90, cylinder = Just 50, sphere = Just 35 }
-    , { thickness = 40, slab = Just 105, cylinder = Just 60, sphere = Just 45 }
-    , { thickness = 45, slab = Just 135, cylinder = Just 75, sphere = Just 55 }
-    , { thickness = 50, slab = Just 165, cylinder = Just 90, sphere = Just 60 }
-    , { thickness = 55, slab = Just 195, cylinder = Just 105, sphere = Just 75 }
-    , { thickness = 60, slab = Just 225, cylinder = Just 120, sphere = Just 90 }
-    , { thickness = 65, slab = Just 255, cylinder = Just 135, sphere = Just 105 }
-    , { thickness = 70, slab = Just 285, cylinder = Just 165, sphere = Just 120 }
-    , { thickness = 75, slab = Just 330, cylinder = Just 180, sphere = Just 135 }
-    , { thickness = 80, slab = Nothing, cylinder = Just 210, sphere = Just 150 }
-    , { thickness = 85, slab = Nothing, cylinder = Just 225, sphere = Just 165 }
-    , { thickness = 90, slab = Nothing, cylinder = Just 255, sphere = Just 180 }
-    , { thickness = 95, slab = Nothing, cylinder = Just 285, sphere = Just 210 }
-    , { thickness = 100, slab = Nothing, cylinder = Just 300, sphere = Just 225 }
-    , { thickness = 105, slab = Nothing, cylinder = Just 330, sphere = Just 240 }
-    , { thickness = 110, slab = Nothing, cylinder = Just 360, sphere = Just 270 }
-    , { thickness = 115, slab = Nothing, cylinder = Nothing, sphere = Just 285 }
-    ]
 
 
 -- VIEW
 
 
-view : Model -> Html Msg
-view model =
+view : List ChillingRow -> Model -> Html Msg
+view data model =
     div [ class "max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm" ]
         [ h2 [ class "text-2xl font-bold mb-6 text-gray-800 border-b pb-2" ]
             [ text "Rapid Chilling (Cook-Chill) Calculator" ]
@@ -135,13 +108,13 @@ view model =
             [ -- Input Section
               div [ class "space-y-6" ]
                 [ viewShapeSelector model.shape
-                , viewThicknessSlider model
+                , viewThicknessSlider data model
                 ]
             
             -- Result Section
             , div [ class "bg-emerald-50 rounded-lg p-6 flex flex-col justify-center items-center text-center" ]
                 [ h3 [ class "text-lg font-medium text-emerald-800 mb-2" ] [ text "Cooling Time" ]
-                , viewResult model
+                , viewResult data model
                 ]
             ]
         ]
@@ -180,13 +153,13 @@ shapeButton labelStr shape selected description =
         ]
 
 
-viewThicknessSlider : Model -> Html Msg
-viewThicknessSlider model =
+viewThicknessSlider : List ChillingRow -> Model -> Html Msg
+viewThicknessSlider data model =
     let
-        maxT = getMaxThickness model.shape
+        maxT = getMaxThickness data model.shape
         
         allThicknesses = 
-            table1_1
+            data
                 |> List.map (.thickness >> toFloat)
         
         allowed = 
@@ -208,11 +181,11 @@ viewThicknessSlider model =
         }
 
 
-viewResult : Model -> Html Msg
-viewResult model =
+viewResult : List ChillingRow -> Model -> Html Msg
+viewResult data model =
     let
         result =
-            getCoolingTime model.shape model.thicknessInput
+            getCoolingTime data model.shape model.thicknessInput
     in
     case result of
         Just minutes ->

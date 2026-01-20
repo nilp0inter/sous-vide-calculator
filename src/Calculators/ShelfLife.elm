@@ -5,6 +5,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Slider
 import Round
+import Data exposing (ShelfLifeRule)
 
 
 -- MODEL
@@ -38,25 +39,21 @@ update msg model =
 
 {-| Returns max storage duration in days based on refrigerator temperature in Celsius.
 -}
-getStorageDuration : Float -> Maybe Int
-getStorageDuration tempC =
-    if tempC <= 2.5 then
-        Just 90
-    else if tempC <= 3.3 then
-        Just 31
-    else if tempC <= 5.0 then
-        Just 10
-    else if tempC <= 7.0 then
-        Just 5
-    else
-        Nothing
+getStorageDuration : List ShelfLifeRule -> Float -> Maybe Int
+getStorageDuration rules tempC =
+    -- Rules are sorted by maxTemp in JSON presumably, but we should find the first rule where tempC <= maxTemp
+    rules
+        |> List.filter (\rule -> tempC <= rule.maxTemp)
+        |> List.sortBy .maxTemp
+        |> List.head
+        |> Maybe.map .days
 
 
 -- VIEW
 
 
-view : Model -> Html Msg
-view model =
+view : List ShelfLifeRule -> Model -> Html Msg
+view rules model =
     div [ class "max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm" ]
         [ h2 [ class "text-2xl font-bold mb-6 text-gray-800 border-b pb-2" ]
             [ text "Shelf-Life & Storage Timer" ]
@@ -64,24 +61,40 @@ view model =
         , div [ class "grid grid-cols-1 md:grid-cols-2 gap-8" ]
             [ -- Input Section
               div [ class "space-y-6" ]
-                [ viewFridgeTempSlider model
+                [ viewFridgeTempSlider rules model
                 ]
             
             -- Result Section
             , div [ class "bg-purple-50 rounded-lg p-6 flex flex-col justify-center items-center text-center" ]
                 [ h3 [ class "text-lg font-medium text-purple-800 mb-2" ] [ text "Maximum Storage" ]
-                , viewResult model
+                , viewResult rules model
                 ]
             ]
         ]
 
 
-viewFridgeTempSlider : Model -> Html Msg
-viewFridgeTempSlider model =
+viewFridgeTempSlider : List ShelfLifeRule -> Model -> Html Msg
+viewFridgeTempSlider rules model =
     let
-        -- Valid steps including the critical thresholds
-        allowed = [0, 1, 2, 2.5, 3, 3.3, 4, 5, 6, 7]
+        -- Extract thresholds from rules and add some intermediate steps if needed
+        -- Or just use the thresholds as the snap points + 0.
+        thresholds = List.map .maxTemp rules
         
+        -- Add 0, 1, 2, 3, 4, 5, 6, 7 if not present?
+        -- The previous allowed was [0, 1, 2, 2.5, 3, 3.3, 4, 5, 6, 7]
+        -- Let's reconstruct a useful range.
+        -- We can just take the rule thresholds and maybe some integers.
+        -- Let's stick to the rule thresholds + 0 + integers up to max threshold.
+        
+        maxT = List.maximum thresholds |> Maybe.withDefault 7
+        
+        integers = List.range 0 (round maxT) |> List.map toFloat
+        
+        allowed = (integers ++ thresholds) |> List.sort |> unique
+        
+        unique list =
+            List.foldr (\x acc -> if List.member x acc then acc else x :: acc) [] list
+
         formatter val =
             let
                 c = String.fromFloat val ++ " °C"
@@ -98,11 +111,11 @@ viewFridgeTempSlider model =
         }
 
 
-viewResult : Model -> Html Msg
-viewResult model =
+viewResult : List ShelfLifeRule -> Model -> Html Msg
+viewResult rules model =
     let
         result =
-            getStorageDuration model.fridgeTempInput
+            getStorageDuration rules model.fridgeTempInput
     in
     case result of
         Just days ->

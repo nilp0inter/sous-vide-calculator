@@ -4,6 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Round
+import Data exposing (BrineData, BrineRatios)
 
 
 -- MODEL
@@ -55,31 +56,15 @@ update msg model =
 -- CALCULATIONS
 
 
-type alias BrineRatios =
-    { saltMinRatio : Float
-    , saltMaxRatio : Float
-    , sugarRatio : Float
-    }
-
-
-getBrineRatios : ProteinType -> BrineRatios
-getBrineRatios pType =
+getBrineRatios : BrineData -> ProteinType -> BrineRatios
+getBrineRatios data pType =
     case pType of
-        PorkPoultry ->
-            { saltMinRatio = 0.05 -- 5%
-            , saltMaxRatio = 0.10 -- 10%
-            , sugarRatio = 0.0 -- Not specified, assume 0
-            }
-
-        Brisket ->
-            { saltMinRatio = 0.04 -- 4%
-            , saltMaxRatio = 0.04 -- 4%
-            , sugarRatio = 0.03 -- 3%
-            }
+        PorkPoultry -> data.porkPoultry
+        Brisket -> data.brisket
 
 
-calculateAmounts : Model -> Maybe { saltMin : Float, saltMax : Float, sugar : Float, waterGrams : Float }
-calculateAmounts model =
+calculateAmounts : BrineData -> Model -> Maybe { saltMin : Float, saltMax : Float, sugar : Float, waterGrams : Float }
+calculateAmounts data model =
     String.toFloat model.liquidWeightInput
         |> Maybe.map
             (\inputWeight ->
@@ -94,16 +79,16 @@ calculateAmounts model =
                             inputWeight * 28.3495 -- 1 oz = 28.3495 grams
 
                     ratios =
-                        getBrineRatios model.proteinType
+                        getBrineRatios data model.proteinType
 
                     saltMinGrams =
-                        liquidWeightGrams * ratios.saltMinRatio
+                        liquidWeightGrams * ratios.saltMin
 
                     saltMaxGrams =
-                        liquidWeightGrams * ratios.saltMaxRatio
+                        liquidWeightGrams * ratios.saltMax
 
                     sugarGrams =
-                        liquidWeightGrams * ratios.sugarRatio
+                        liquidWeightGrams * ratios.sugar
                 in
                 { saltMin = saltMinGrams
                 , saltMax = saltMaxGrams
@@ -117,8 +102,8 @@ calculateAmounts model =
 -- VIEW
 
 
-view : Model -> Html Msg
-view model =
+view : BrineData -> Model -> Html Msg
+view data model =
     div [ class "max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm" ]
         [ h2 [ class "text-2xl font-bold mb-6 text-gray-800 border-b pb-2" ]
             [ text "Brine & Marinade Ratio Tool" ]
@@ -134,7 +119,7 @@ view model =
             -- Result Section
             , div [ class "bg-yellow-50 rounded-lg p-6 flex flex-col justify-center items-center text-center" ]
                 [ h3 [ class "text-lg font-medium text-yellow-800 mb-2" ] [ text "Required Amounts" ]
-                , viewResult model
+                , viewResult data model
                 ]
             ]
         ]
@@ -224,8 +209,8 @@ viewLiquidWeightInput model =
         ]
 
 
-viewResult : Model -> Html Msg
-viewResult model =
+viewResult : BrineData -> Model -> Html Msg
+viewResult data model =
     let
         formatGrams g = String.fromFloat (round2dp g) ++ " g"
         formatOz g = String.fromFloat (round2dp (g / 28.3495)) ++ " oz"
@@ -237,7 +222,7 @@ viewResult model =
             in
             toFloat rounded / multiplier
     in
-    case calculateAmounts model of
+    case calculateAmounts data model of
         Just { saltMin, saltMax, sugar } ->
             div [ class "space-y-4 text-left inline-block" ]
                 [ if model.proteinType == PorkPoultry then

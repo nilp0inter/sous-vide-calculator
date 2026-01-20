@@ -4,6 +4,8 @@ import Browser
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
+import Http
+import Data exposing (Data)
 
 import Calculators.Heating
 import Calculators.Pasteurization
@@ -18,10 +20,11 @@ import Calculators.ShelfLife
 
 main : Program () Model Msg
 main =
-    Browser.sandbox
+    Browser.element
         { init = init
         , view = view
         , update = update
+        , subscriptions = \_ -> Sub.none
         }
 
 
@@ -38,8 +41,15 @@ type Tab
     | ShelfLife
 
 
+type Status
+    = Loading
+    | Failed Http.Error
+    | Loaded Data
+
+
 type alias Model =
     { activeTab : Tab
+    , status : Status
     , heating : Calculators.Heating.Model
     , pasteurization : Calculators.Pasteurization.Model
     , rapidChilling : Calculators.RapidChilling.Model
@@ -49,16 +59,22 @@ type alias Model =
     }
 
 
-init : Model
-init =
-    { activeTab = Pasteurization
-    , heating = Calculators.Heating.init
-    , pasteurization = Calculators.Pasteurization.init
-    , rapidChilling = Calculators.RapidChilling.init
-    , brineMarinade = Calculators.BrineMarinade.init
-    , doneness = Calculators.Doneness.init
-    , shelfLife = Calculators.ShelfLife.init
-    }
+init : () -> ( Model, Cmd Msg )
+init _ =
+    ( { activeTab = Pasteurization
+      , status = Loading
+      , heating = Calculators.Heating.init
+      , pasteurization = Calculators.Pasteurization.init
+      , rapidChilling = Calculators.RapidChilling.init
+      , brineMarinade = Calculators.BrineMarinade.init
+      , doneness = Calculators.Doneness.init
+      , shelfLife = Calculators.ShelfLife.init
+      }
+    , Http.get
+        { url = "data.json"
+        , expect = Http.expectJson GotData Data.dataDecoder
+        }
+    )
 
 
 
@@ -67,6 +83,7 @@ init =
 
 type Msg
     = SelectTab Tab
+    | GotData (Result Http.Error Data)
     | HeatingMsg Calculators.Heating.Msg
     | PasteurizationMsg Calculators.Pasteurization.Msg
     | RapidChillingMsg Calculators.RapidChilling.Msg
@@ -75,29 +92,45 @@ type Msg
     | ShelfLifeMsg Calculators.ShelfLife.Msg
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         SelectTab tab ->
-            { model | activeTab = tab }
+            ( { model | activeTab = tab }, Cmd.none )
+
+        GotData result ->
+            case result of
+                Ok data ->
+                    ( { model | status = Loaded data }, Cmd.none )
+
+                Err error ->
+                    ( { model | status = Failed error }, Cmd.none )
 
         HeatingMsg subMsg ->
-            { model | heating = Calculators.Heating.update subMsg model.heating }
+            case model.status of
+                Loaded data ->
+                    ( { model | heating = Calculators.Heating.update data.heating subMsg model.heating }, Cmd.none )
+                _ ->
+                    ( model, Cmd.none )
 
         PasteurizationMsg subMsg ->
-            { model | pasteurization = Calculators.Pasteurization.update subMsg model.pasteurization }
+            ( { model | pasteurization = Calculators.Pasteurization.update subMsg model.pasteurization }, Cmd.none )
 
         RapidChillingMsg subMsg ->
-            { model | rapidChilling = Calculators.RapidChilling.update subMsg model.rapidChilling }
+            case model.status of
+                Loaded data ->
+                    ( { model | rapidChilling = Calculators.RapidChilling.update data.rapidChilling subMsg model.rapidChilling }, Cmd.none )
+                _ ->
+                    ( model, Cmd.none )
 
         BrineMarinadeMsg subMsg ->
-            { model | brineMarinade = Calculators.BrineMarinade.update subMsg model.brineMarinade }
+            ( { model | brineMarinade = Calculators.BrineMarinade.update subMsg model.brineMarinade }, Cmd.none )
 
         DonenessMsg subMsg ->
-            { model | doneness = Calculators.Doneness.update subMsg model.doneness }
+            ( { model | doneness = Calculators.Doneness.update subMsg model.doneness }, Cmd.none )
 
         ShelfLifeMsg subMsg ->
-            { model | shelfLife = Calculators.ShelfLife.update subMsg model.shelfLife }
+            ( { model | shelfLife = Calculators.ShelfLife.update subMsg model.shelfLife }, Cmd.none )
 
 
 
@@ -107,15 +140,25 @@ update msg model =
 view : Model -> Html Msg
 view model =
     div [ class "min-h-screen bg-gray-50 flex flex-col font-sans" ]
-        [ viewHeader model
-        , viewTabs model
-        , viewContent model
+        [ viewHeader
+        , case model.status of
+            Loading ->
+                viewLoading
+
+            Failed error ->
+                viewError error
+
+            Loaded data ->
+                div [ class "flex-grow flex flex-col" ]
+                    [ viewTabs model
+                    , viewContent data model
+                    ]
         , viewFooter
         ]
 
 
-viewHeader : Model -> Html Msg
-viewHeader model =
+viewHeader : Html Msg
+viewHeader =
     header [ class "bg-white shadow-sm sticky top-0 z-10" ]
         [ div [ class "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between" ]
             [ div [ class "flex items-center" ]
@@ -124,6 +167,35 @@ viewHeader model =
                 , span [ class "ml-3 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 hidden sm:inline-block" ]
                     [ text "Baldwin Model" ]
                 ]
+            ]
+        ]
+
+
+viewLoading : Html Msg
+viewLoading =
+    div [ class "flex-grow flex items-center justify-center" ]
+        [ div [ class "text-center" ]
+            [ div [ class "inline-block animate-spin rounded-full h-8 w-8 border-4 border-gray-300 border-t-indigo-600 mb-4" ] []
+            , p [ class "text-gray-500" ] [ text "Loading data..." ]
+            ]
+        ]
+
+
+viewError : Http.Error -> Html Msg
+viewError error =
+    let
+        errorMsg =
+            case error of
+                Http.BadUrl url -> "Bad URL: " ++ url
+                Http.Timeout -> "Timeout"
+                Http.NetworkError -> "Network Error"
+                Http.BadStatus status -> "Bad Status: " ++ String.fromInt status
+                Http.BadBody body -> "Bad Body: " ++ body
+    in
+    div [ class "flex-grow flex items-center justify-center p-4" ]
+        [ div [ class "bg-red-50 p-4 rounded-lg text-center" ]
+            [ h3 [ class "text-red-800 font-bold mb-2" ] [ text "Failed to load data" ]
+            , p [ class "text-red-600" ] [ text errorMsg ]
             ]
         ]
 
@@ -166,27 +238,27 @@ tabButton tab currentTab label =
         [ text label ]
 
 
-viewContent : Model -> Html Msg
-viewContent model =
+viewContent : Data -> Model -> Html Msg
+viewContent data model =
     main_ [ class "flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8" ]
         [ case model.activeTab of
             Heating ->
-                Html.map HeatingMsg (Calculators.Heating.view model.heating)
+                Html.map HeatingMsg (Calculators.Heating.view data.heating model.heating)
 
             Pasteurization ->
-                Html.map PasteurizationMsg (Calculators.Pasteurization.view model.pasteurization)
+                Html.map PasteurizationMsg (Calculators.Pasteurization.view data.pasteurization model.pasteurization)
 
             RapidChilling ->
-                Html.map RapidChillingMsg (Calculators.RapidChilling.view model.rapidChilling)
+                Html.map RapidChillingMsg (Calculators.RapidChilling.view data.rapidChilling model.rapidChilling)
 
             BrineMarinade ->
-                Html.map BrineMarinadeMsg (Calculators.BrineMarinade.view model.brineMarinade)
+                Html.map BrineMarinadeMsg (Calculators.BrineMarinade.view data.brine model.brineMarinade)
 
             Doneness ->
-                Html.map DonenessMsg (Calculators.Doneness.view model.doneness)
+                Html.map DonenessMsg (Calculators.Doneness.view data.doneness model.doneness)
 
             ShelfLife ->
-                Html.map ShelfLifeMsg (Calculators.ShelfLife.view model.shelfLife)
+                Html.map ShelfLifeMsg (Calculators.ShelfLife.view data.shelfLife model.shelfLife)
         ]
 
 

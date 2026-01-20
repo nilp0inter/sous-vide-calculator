@@ -5,6 +5,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Slider
 import Round
+import Data exposing (HeatingData, HeatingRow)
 
 
 -- MODEL
@@ -40,22 +41,15 @@ type Msg
     | SetThickness Float
 
 
-update : Msg -> Model -> Model
-update msg model =
+update : HeatingData -> Msg -> Model -> Model
+update data msg model =
     case msg of
         SetStartState state ->
             { model | startState = state }
 
         SetShape shape ->
-            -- If the current thickness is invalid for the new shape, clamp it?
-            -- The slider will handle it by snapping to the nearest valid, 
-            -- but the Model value needs to be valid.
-            -- We'll just let the view filter the options. 
-            -- Ideally we should clamp here, but simpler to just let user adjust.
-            -- Actually, if we switch shape to Slab and thickness is 115, that's invalid.
-            -- Let's clamp it to the new max.
             let
-                maxT = getMaxThickness shape
+                maxT = getMaxThickness data model.startState shape
                 newThickness = Basics.min model.thicknessInput (toFloat maxT)
             in
             { model | shape = shape, thicknessInput = newThickness }
@@ -64,12 +58,25 @@ update msg model =
             { model | thicknessInput = val }
 
 
-getMaxThickness : Shape -> Int
-getMaxThickness shape =
-    case shape of
-        Slab -> 65
-        Cylinder -> 95
-        Sphere -> 115
+getMaxThickness : HeatingData -> StartState -> Shape -> Int
+getMaxThickness data state shape =
+    let
+        table =
+            case state of
+                Thawed -> data.thawed
+                Frozen -> data.frozen
+        
+        hasValue row =
+            case shape of
+                Slab -> row.slab /= Nothing
+                Cylinder -> row.cylinder /= Nothing
+                Sphere -> row.sphere /= Nothing
+    in
+    table
+        |> List.filter hasValue
+        |> List.map .thickness
+        |> List.maximum
+        |> Maybe.withDefault 0
 
 
 -- DATA
@@ -78,18 +85,18 @@ getMaxThickness shape =
 {-| Returns heating time in minutes.
     Logic: Round thickness UP to nearest 5mm in table.
 -}
-getHeatingTime : StartState -> Shape -> Float -> Maybe Int
-getHeatingTime state shape thickness =
+getHeatingTime : HeatingData -> StartState -> Shape -> Float -> Maybe Int
+getHeatingTime data state shape thickness =
     let
-        maxThickness = getMaxThickness shape
+        maxThickness = getMaxThickness data state shape
 
         -- The slider gives us exact table values, but safe to keep this logic
         safeThickness = round thickness
         
         table =
             case state of
-                Thawed -> thawedTable
-                Frozen -> frozenTable
+                Thawed -> data.thawed
+                Frozen -> data.frozen
         
         -- Helper to extract the correct column (Slab, Cylinder, Sphere)
         getColumn row =
@@ -108,77 +115,11 @@ getHeatingTime state shape thickness =
                 |> Maybe.andThen getColumn
 
 
-type alias Row =
-    { thickness : Int
-    , slab : Maybe Int
-    , cylinder : Maybe Int
-    , sphere : Maybe Int
-    }
-
-
--- Table 2.2: Thawed
-thawedTable : List Row
-thawedTable =
-    [ { thickness = 5, slab = Just 5, cylinder = Just 5, sphere = Just 4 }
-    , { thickness = 10, slab = Just 19, cylinder = Just 11, sphere = Just 8 }
-    , { thickness = 15, slab = Just 35, cylinder = Just 18, sphere = Just 13 }
-    , { thickness = 20, slab = Just 50, cylinder = Just 30, sphere = Just 20 }
-    , { thickness = 25, slab = Just 75, cylinder = Just 40, sphere = Just 25 }
-    , { thickness = 30, slab = Just 90, cylinder = Just 50, sphere = Just 35 }
-    , { thickness = 35, slab = Just 120, cylinder = Just 60, sphere = Just 45 }
-    , { thickness = 40, slab = Just 150, cylinder = Just 75, sphere = Just 55 }
-    , { thickness = 45, slab = Just 180, cylinder = Just 90, sphere = Just 75 }
-    , { thickness = 50, slab = Just 210, cylinder = Just 120, sphere = Just 90 }
-    , { thickness = 55, slab = Just 240, cylinder = Just 135, sphere = Just 90 }
-    , { thickness = 60, slab = Just 285, cylinder = Just 150, sphere = Just 120 }
-    , { thickness = 65, slab = Just 330, cylinder = Just 180, sphere = Just 135 }
-    , { thickness = 70, slab = Nothing, cylinder = Just 210, sphere = Just 150 }
-    , { thickness = 75, slab = Nothing, cylinder = Just 225, sphere = Just 165 }
-    , { thickness = 80, slab = Nothing, cylinder = Just 255, sphere = Just 180 }
-    , { thickness = 85, slab = Nothing, cylinder = Just 285, sphere = Just 210 }
-    , { thickness = 90, slab = Nothing, cylinder = Just 315, sphere = Just 225 }
-    , { thickness = 95, slab = Nothing, cylinder = Just 360, sphere = Just 255 }
-    , { thickness = 100, slab = Nothing, cylinder = Nothing, sphere = Just 285 }
-    , { thickness = 105, slab = Nothing, cylinder = Nothing, sphere = Just 300 }
-    , { thickness = 110, slab = Nothing, cylinder = Nothing, sphere = Just 330 }
-    , { thickness = 115, slab = Nothing, cylinder = Nothing, sphere = Just 360 }
-    ]
-
-
--- Table 2.3: Frozen
-frozenTable : List Row
-frozenTable =
-    [ { thickness = 5, slab = Just 7, cylinder = Just 7, sphere = Just 6 }
-    , { thickness = 10, slab = Just 30, cylinder = Just 17, sphere = Just 12 }
-    , { thickness = 15, slab = Just 50, cylinder = Just 30, sphere = Just 20 }
-    , { thickness = 20, slab = Just 75, cylinder = Just 40, sphere = Just 30 }
-    , { thickness = 25, slab = Just 105, cylinder = Just 55, sphere = Just 40 }
-    , { thickness = 30, slab = Just 135, cylinder = Just 75, sphere = Just 55 }
-    , { thickness = 35, slab = Just 180, cylinder = Just 90, sphere = Just 75 }
-    , { thickness = 40, slab = Just 210, cylinder = Just 120, sphere = Just 90 }
-    , { thickness = 45, slab = Just 270, cylinder = Just 150, sphere = Just 105 }
-    , { thickness = 50, slab = Just 315, cylinder = Just 165, sphere = Just 120 }
-    , { thickness = 55, slab = Just 375, cylinder = Just 195, sphere = Just 150 }
-    , { thickness = 60, slab = Just 435, cylinder = Just 240, sphere = Just 165 }
-    , { thickness = 65, slab = Just 495, cylinder = Just 270, sphere = Just 195 }
-    , { thickness = 70, slab = Nothing, cylinder = Just 300, sphere = Just 225 }
-    , { thickness = 75, slab = Nothing, cylinder = Just 345, sphere = Just 255 }
-    , { thickness = 80, slab = Nothing, cylinder = Just 390, sphere = Just 285 }
-    , { thickness = 85, slab = Nothing, cylinder = Just 435, sphere = Just 315 }
-    , { thickness = 90, slab = Nothing, cylinder = Just 480, sphere = Just 345 }
-    , { thickness = 95, slab = Nothing, cylinder = Just 525, sphere = Just 375 }
-    , { thickness = 100, slab = Nothing, cylinder = Nothing, sphere = Just 420 }
-    , { thickness = 105, slab = Nothing, cylinder = Nothing, sphere = Just 450 }
-    , { thickness = 110, slab = Nothing, cylinder = Nothing, sphere = Just 495 }
-    , { thickness = 115, slab = Nothing, cylinder = Nothing, sphere = Just 540 }
-    ]
-
-
 -- VIEW
 
 
-view : Model -> Html Msg
-view model =
+view : HeatingData -> Model -> Html Msg
+view data model =
     div [ class "max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm" ]
         [ h2 [ class "text-2xl font-bold mb-6 text-gray-800 border-b pb-2" ]
             [ text "Heating Time Calculator" ]
@@ -188,13 +129,13 @@ view model =
               div [ class "space-y-6" ]
                 [ viewStateSelector model.startState
                 , viewShapeSelector model.shape
-                , viewThicknessSlider model
+                , viewThicknessSlider data model
                 ]
             
             -- Result Section
             , div [ class "bg-indigo-50 rounded-lg p-6 flex flex-col justify-center items-center text-center" ]
                 [ h3 [ class "text-lg font-medium text-indigo-800 mb-2" ] [ text "Time to Reach Temperature" ]
-                , viewResult model
+                , viewResult data model
                 ]
             ]
         ]
@@ -263,13 +204,18 @@ shapeButton labelStr shape selected description =
         ]
 
 
-viewThicknessSlider : Model -> Html Msg
-viewThicknessSlider model =
+viewThicknessSlider : HeatingData -> Model -> Html Msg
+viewThicknessSlider data model =
     let
-        maxT = getMaxThickness model.shape
+        maxT = getMaxThickness data model.startState model.shape
         
+        table = 
+            case model.startState of
+                Thawed -> data.thawed
+                Frozen -> data.frozen
+
         allThicknesses = 
-            thawedTable
+            table
                 |> List.map (.thickness >> toFloat)
         
         allowed = 
@@ -291,11 +237,11 @@ viewThicknessSlider model =
         }
 
 
-viewResult : Model -> Html Msg
-viewResult model =
+viewResult : HeatingData -> Model -> Html Msg
+viewResult data model =
     let
         result =
-            getHeatingTime model.startState model.shape model.thicknessInput
+            getHeatingTime data model.startState model.shape model.thicknessInput
     in
     case result of
         Just minutes ->
