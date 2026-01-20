@@ -7,6 +7,7 @@
     "max": "Máx"
   },
   "tabs": {
+    "introduction": "Introducción",
     "pasteurization": "Pasteurización",
     "heating": "Tiempo de Calentamiento",
     "rapidChilling": "Enfriamiento Rápido",
@@ -14,8 +15,25 @@
     "doneness": "Punto de Cocción",
     "shelfLife": "Vida Útil"
   },
+  "introduction": {
+    "title": "Introducción al Sous Vide",
+    "whatIsTitle": "¿Qué es el Sous Vide?",
+    "whatIsBody": "Sous vide es un método de cocción en bolsas de plástico selladas al vacío a temperaturas controladas con precisión. Esto permite obtener resultados consistentes, una mejor retención del sabor y la capacidad de cocinar cortes de carne duros hasta obtener una textura tierna sin cocinarlos en exceso.",
+    "threeStagesTitle": "Etapas de la Técnica Básica y Herramientas",
+    "stage1Title": "1. Preparación para el Envasado",
+    "stage1Body": "Sazonar puede ser complicado. Use la [brine|Herramienta de Proporción de Salmuera y Adobo] para calcular las cantidades precisas de sal y azúcar para una retención óptima de la humedad. Evite el ajo crudo (use en polvo) y el aceite de oliva virgen extra para cocciones largas.",
+    "stage2Title": "2. Cocción",
+    "stage2Body": "La cocción se realiza en un baño de agua. Use el [doneness|Visualizador de Punto y Textura] para elegir su temperatura objetivo. Use la [heating|Calculadora de Tiempo de Calentamiento] para asegurarse de que la comida alcance esa temperatura. Para mayor seguridad, especialmente en cocciones largas o poblaciones vulnerables, use la [pasteurization|Calculadora de Pasteurización].",
+    "stage3Title": "3. Acabado",
+    "stage3Body": "Dado que la comida sous vide tiene un aspecto escalfado al sacarla de la bolsa, generalmente se termina sellándola. Use una sartén muy caliente con aceite humeante o un soplete para crear una costra sabrosa (reacción de Maillard) sin sobrecocinar el interior.",
+    "stage4Title": "4. Enfriamiento y Almacenamiento (Cook-Chill)",
+    "stage4Body": "Si no se va a consumir de inmediato, el enfriamiento rápido es esencial para evitar el crecimiento de esporas. Use la [chilling|Calculadora de Enfriamiento Rápido] para determinar los tiempos en baño de hielo. Use el [shelf-life|Temporizador de Vida Útil y Almacenamiento] para saber cuánto tiempo permanece segura su comida pasteurizada en el refrigerador.",
+    "safetyNoteTitle": "Una Nota sobre Seguridad",
+    "safetyNoteBody": "La seguridad alimentaria en el sous vide depende tanto de la temperatura como del tiempo. Esta aplicación utiliza los modelos matemáticos del Dr. Douglas Baldwin para calcular los tiempos mínimos requeridos para reducir los patógenos a niveles seguros."
+  },
   "heating": {
     "title": "Calculadora de Tiempo de Calentamiento",
+    "explanation": "Calcula cuánto tiempo tarda el centro de los alimentos en alcanzar la temperatura del baño de agua. Útil para asegurar que la comida se caliente por completo sin necesariamente pasteurizarla.",
     "startState": "Estado Inicial",
     "thawed": "Descongelado / Fresco",
     "frozen": "Congelado",
@@ -33,6 +51,7 @@
   },
   "pasteurization": {
     "title": "Calculadora de Pasteurización",
+    "explanation": "Calcula el tiempo mínimo requerido para reducir los patógenos (Salmonella, Listeria, E. coli) a niveles seguros según el tipo de proteína, el grosor y la temperatura.",
     "protein": "Tipo de Proteína",
     "meat": "Carne (Res/Cerdo/Cordero)",
     "poultry": "Aves",
@@ -49,6 +68,7 @@
   },
   "rapidChilling": {
     "title": "Calculadora de Enfriamiento Rápido (Cook-Chill)",
+    "explanation": "Determina el tiempo necesario para enfriar alimentos sellados en un baño de hielo hasta los 5°C (41°F). Crucial para prevenir el crecimiento de esporas al almacenar alimentos para su uso posterior.",
     "shape": "Forma",
     "thickness": "Grosor",
     "resultHeader": "Tiempo de Enfriamiento",
@@ -57,6 +77,7 @@
   },
   "brine": {
     "title": "Herramienta de Proporción de Salmuera y Adobo",
+    "explanation": "Calcula las cantidades exactas de sal y azúcar necesarias para una salmuera óptima, mejorando la textura y la retención de humedad para tipos de proteína específicos.",
     "protein": "Tipo de Proteína",
     "porkPoultry": "Cerdo / Aves",
     "brisket": "Pecho de Res (Brisket)",
@@ -71,6 +92,7 @@
   },
   "doneness": {
     "title": "Visualizador de Punto y Textura",
+    "explanation": "Visualiza cómo la temperatura afecta la textura y el punto de cocción de la carne y el pescado, ayudándole a elegir la temperatura objetivo perfecta.",
     "protein": "Tipo de Proteína",
     "meat": "Carne (Res/Cordero)",
     "fish": "Pescado",
@@ -88,6 +110,7 @@
   },
   "shelfLife": {
     "title": "Temporizador de Vida Útil y Almacenamiento",
+    "explanation": "Calcula el tiempo máximo de almacenamiento seguro en el refrigerador para alimentos pasteurizados y enfriados rápidamente, según la temperatura de almacenamiento. Alternativamente, la comida se puede congelar hasta por un año.",
     "temp": "Temperatura del Refrigerador",
     "resultHeader": "Almacenamiento Máximo",
     "suffix": "a esta temperatura.",

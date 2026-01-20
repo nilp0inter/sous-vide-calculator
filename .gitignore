@@ -19,3 +19,4 @@ dist
 
 # Nix direnv
 .direnv
+dev-dist

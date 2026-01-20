@@ -7,6 +7,7 @@
     "max": "Max"
   },
   "tabs": {
+    "introduction": "Introduction",
     "pasteurization": "Pasteurisation",
     "heating": "Temps de Chauffage",
     "rapidChilling": "Refroidissement Rapide",
@@ -14,8 +15,25 @@
     "doneness": "Cuisson",
     "shelfLife": "Durée de Conservation"
   },
+  "introduction": {
+    "title": "Introduction au Sous-Vide",
+    "whatIsTitle": "Qu'est-ce que le Sous-Vide ?",
+    "whatIsBody": "Le sous-vide est une méthode de cuisson dans des sachets plastiques scellés sous vide à des températures contrôlées avec précision. Cela permet d'obtenir des résultats constants, une meilleure rétention des saveurs et la possibilité de cuire des coupes de viande coriaces jusqu'à une texture tendre sans surcuisson.",
+    "threeStagesTitle": "Étapes de la Technique de Base & Outils",
+    "stage1Title": "1. Préparation pour l'Emballage",
+    "stage1Body": "L'assaisonnement peut être délicat. Utilisez l'[brine|Outil de Ratio Saumure & Marinade] pour calculer les quantités précises de sel et de sucre pour une rétention d'humidité optimale. Évitez l'ail cru (utilisez de l'ail en poudre) et l'huile d'olive extra vierge pour les cuissons longues.",
+    "stage2Title": "2. Cuisson",
+    "stage2Body": "La cuisson se fait dans un bain-marie. Utilisez le [doneness|Visualiseur de Cuisson & Texture] pour choisir votre température cible. Utilisez le [heating|Calculateur de Temps de Chauffage] pour vous assurer que les aliments atteignent cette température. Pour la sécurité, en particulier pour les cuissons longues ou les populations vulnérables, utilisez le [pasteurization|Calculateur de Pasteurisation].",
+    "stage3Title": "3. Finition",
+    "stage3Body": "Comme les aliments cuits sous-vide ont un aspect poché lorsqu'ils sont sortis du sachet, ils sont généralement finis par un marquage. Utilisez une poêle très chaude avec de l'huile fumante ou un chalumeau pour créer une croûte savoureuse (réaction de Maillard) sans surcuire l'intérieur.",
+    "stage4Title": "4. Refroidissement & Stockage (Cook-Chill)",
+    "stage4Body": "Si vous ne servez pas immédiatement, un refroidissement rapide est essentiel pour éviter la prolifération des spores. Utilisez le [chilling|Calculateur de Refroidissement Rapide] pour déterminer les temps de refroidissement en bain de glace. Utilisez le [shelf-life|Minuteur de Durée de Conservation & Stockage] pour savoir combien de temps vos aliments pasteurisés restent sûrs au réfrigérateur.",
+    "safetyNoteTitle": "Note sur la Sécurité",
+    "safetyNoteBody": "La sécurité alimentaire en sous-vide dépend à la fois de la température et du temps. Cette application utilise les modèles mathématiques du Dr Douglas Baldwin pour calculer les temps minimums requis pour réduire les agents pathogènes à des niveaux sûrs."
+  },
   "heating": {
     "title": "Calculateur de Temps de Chauffage",
+    "explanation": "Estime le temps nécessaire pour que le centre de vos aliments atteigne la température du bain-marie. Utile pour s'assurer que les aliments sont chauffés à cœur sans forcément les pasteuriser.",
     "startState": "État Initial",
     "thawed": "Décongelé / Frais",
     "frozen": "Congelé",
@@ -33,6 +51,7 @@
   },
   "pasteurization": {
     "title": "Calculateur de Pasteurisation",
+    "explanation": "Calcule le temps minimum requis pour réduire les agents pathogènes (Salmonelle, Listeria, E. coli) à des niveaux sûrs en fonction du type de protéine, de l'épaisseur et de la température.",
     "protein": "Type de Protéine",
     "meat": "Viande (Bœuf/Porc/Agneau)",
     "poultry": "Volaille",
@@ -49,6 +68,7 @@
   },
   "rapidChilling": {
     "title": "Calculateur de Refroidissement Rapide (Cook-Chill)",
+    "explanation": "Détermine le temps requis pour refroidir les aliments scellés dans un bain de glace jusqu'à 5°C (41°F). Crucial pour prévenir la prolifération des spores lors de la conservation des aliments pour une utilisation ultérieure.",
     "shape": "Forme",
     "thickness": "Épaisseur",
     "resultHeader": "Temps de Refroidissement",
@@ -57,6 +77,7 @@
   },
   "brine": {
     "title": "Outil de Ratio Saumure & Marinade",
+    "explanation": "Calcule les quantités exactes de sel et de sucre nécessaires pour un saumurage optimal, améliorant la texture et la rétention d'humidité pour des types de protéines spécifiques.",
     "protein": "Type de Protéine",
     "porkPoultry": "Porc / Volaille",
     "brisket": "Poitrine de Bœuf (Brisket)",
@@ -71,6 +92,7 @@
   },
   "doneness": {
     "title": "Visualiseur de Cuisson & Texture",
+    "explanation": "Visualise comment la température affecte la texture et la cuisson de la viande et du poisson, vous aidant à choisir la température cible parfaite.",
     "protein": "Type de Protéine",
     "meat": "Viande (Bœuf/Agneau)",
     "fish": "Poisson",
@@ -88,6 +110,7 @@
   },
   "shelfLife": {
     "title": "Minuteur de Durée de Conservation & Stockage",
+    "explanation": "Calcule la durée maximale de stockage sûre au réfrigérateur pour les aliments pasteurisés et refroidis rapidement en fonction de la température de stockage. Alternativement, les aliments peuvent être congelés jusqu'à un an.",
     "temp": "Température du Réfrigérateur",
     "resultHeader": "Stockage Maximum",
     "suffix": "à cette température.",

@@ -1,4 +1,4 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Browser
 import Html exposing (..)
@@ -14,314 +14,113 @@ import Calculators.RapidChilling
 import Calculators.BrineMarinade
 import Calculators.Doneness
 import Calculators.ShelfLife
+import Introduction
+
+
+-- PORTS
+
+port onHashChange : (String -> msg) -> Sub msg
 
 
 -- MAIN
 
+type alias Flags =
+    { lang : String
+    , hash : String
+    }
 
-main : Program String Model Msg
-
-
+main : Program Flags Model Msg
 main =
-
-
     Browser.element
-
-
         { init = init
-
-
         , view = view
-
-
         , update = update
-
-
-        , subscriptions = \_ -> Sub.none
-
-
+        , subscriptions = subscriptions
         }
-
-
-
-
-
-
-
-
-
 
 
 -- MODEL
 
 
-
-
-
-
-
-
 type Tab
-
-
-    = Pasteurization
-
-
-    | Heating
-
-
-    | RapidChilling
-
-
+    = Introduction
     | BrineMarinade
-
-
     | Doneness
-
-
+    | Heating
+    | Pasteurization
+    | RapidChilling
     | ShelfLife
 
 
-
-
-
-
-
-
 type Status
-
-
     = Loading
-
-
     | Failed Http.Error
-
-
     | Loaded Data
 
 
-
-
-
-
-
-
 type Language
-
-
-
-
-
-
-
-
     = En
-
-
-
-
-
-
-
-
     | Es
-
-
-
-
-
-
-
-
     | Fr
-
-
-
-
-
-
-
-
     | De
-
-
-
-
-
-
-
-
     | Pt
-
-
-
-
-
-
-
-
     | Fi
 
 
-
-
-
-
-
-
 type alias Model =
-
-
     { activeTab : Tab
-
-
     , status : Status
-
-
     , translations : Maybe Translations
-
-
     , currentLanguage : Language
-
-
     , error : Maybe Http.Error
-
-
     , heating : Calculators.Heating.Model
-
-
     , pasteurization : Calculators.Pasteurization.Model
-
-
     , rapidChilling : Calculators.RapidChilling.Model
-
-
     , brineMarinade : Calculators.BrineMarinade.Model
-
-
     , doneness : Calculators.Doneness.Model
-
-
     , shelfLife : Calculators.ShelfLife.Model
-
-
     }
 
 
-
-
-
-
-
-
-init : String -> ( Model, Cmd Msg )
-
-
-init langFlag =
-
-
+init : Flags -> ( Model, Cmd Msg )
+init flags =
     let
-
-
-                                        defaultLang =
-
-
-                                            if String.startsWith "es" (String.toLower langFlag) then
-
-
-                                                Es
-
-
-                                            else if String.startsWith "fr" (String.toLower langFlag) then
-
-
-                                                Fr
-
-
-                                            else if String.startsWith "de" (String.toLower langFlag) then
-
-
-                                                De
-
-
-                                            else if String.startsWith "pt" (String.toLower langFlag) then
-
-
-                                                Pt
-
-
-                                            else if String.startsWith "fi" (String.toLower langFlag) then
-
-
-                                                Fi
-
-
-                                            else
-
-
-                                                En
-
-
+        defaultLang =
+            if String.startsWith "es" (String.toLower flags.lang) then
+                Es
+            else if String.startsWith "fr" (String.toLower flags.lang) then
+                Fr
+            else if String.startsWith "de" (String.toLower flags.lang) then
+                De
+            else if String.startsWith "pt" (String.toLower flags.lang) then
+                Pt
+            else if String.startsWith "fi" (String.toLower flags.lang) then
+                Fi
+            else
+                En
+        
+        initialTab =
+            hashToTab flags.hash
     in
-
-
-    ( { activeTab = Pasteurization
-
-
+    ( { activeTab = initialTab
       , status = Loading
-
-
       , translations = Nothing
-
-
       , currentLanguage = defaultLang
-
-
       , error = Nothing
-
-
       , heating = Calculators.Heating.init
-
-
       , pasteurization = Calculators.Pasteurization.init
-
-
       , rapidChilling = Calculators.RapidChilling.init
-
-
       , brineMarinade = Calculators.BrineMarinade.init
-
-
       , doneness = Calculators.Doneness.init
-
-
       , shelfLife = Calculators.ShelfLife.init
-
-
       }
-
-
     , Cmd.batch
-
-
         [ Http.get
-
-
             { url = "data.json"
-
-
             , expect = Http.expectJson GotData Data.dataDecoder
-
-
             }
-
-
         , fetchTranslations defaultLang
-
-
         ]
-
-
     )
 
 
@@ -344,6 +143,39 @@ languageToFilename lang =
         Fi -> "fi.json"
 
 
+-- ROUTING HELPERS
+
+tabToHash : Tab -> String
+tabToHash tab =
+    case tab of
+        Introduction -> "introduction"
+        BrineMarinade -> "brine"
+        Doneness -> "doneness"
+        Heating -> "heating"
+        Pasteurization -> "pasteurization"
+        RapidChilling -> "chilling"
+        ShelfLife -> "shelf-life"
+
+hashToTab : String -> Tab
+hashToTab hash =
+    let
+        cleanHash =
+            if String.startsWith "#" hash then
+                String.dropLeft 1 hash
+            else
+                hash
+    in
+    case cleanHash of
+        "brine" -> BrineMarinade
+        "doneness" -> Doneness
+        "heating" -> Heating
+        "pasteurization" -> Pasteurization
+        "chilling" -> RapidChilling
+        "shelf-life" -> ShelfLife
+        "introduction" -> Introduction
+        _ -> Introduction
+
+
 -- UPDATE
 
 
@@ -358,6 +190,7 @@ type Msg
     | BrineMarinadeMsg Calculators.BrineMarinade.Msg
     | DonenessMsg Calculators.Doneness.Msg
     | ShelfLifeMsg Calculators.ShelfLife.Msg
+    | HashChanged String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -426,6 +259,16 @@ update msg model =
         ShelfLifeMsg subMsg ->
             ( { model | shelfLife = Calculators.ShelfLife.update subMsg model.shelfLife }, Cmd.none )
 
+        HashChanged hash ->
+            ( { model | activeTab = hashToTab hash }, Cmd.none )
+
+
+
+-- SUBSCRIPTIONS
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    onHashChange HashChanged
 
 
 -- VIEW
@@ -524,11 +367,12 @@ viewTabs t model =
     div [ class "bg-white border-b border-gray-200 overflow-x-auto scrollbar-hide" ]
         [ div [ class "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" ]
             [ nav [ class "-mb-px flex space-x-6 sm:space-x-8", attribute "role" "tablist", attribute "aria-label" "Tabs" ]
-                [ tabButton Pasteurization model.activeTab t.tabs.pasteurization
-                , tabButton Heating model.activeTab t.tabs.heating
-                , tabButton RapidChilling model.activeTab t.tabs.rapidChilling
+                [ tabButton Introduction model.activeTab t.tabs.introduction
                 , tabButton BrineMarinade model.activeTab t.tabs.brine
                 , tabButton Doneness model.activeTab t.tabs.doneness
+                , tabButton Heating model.activeTab t.tabs.heating
+                , tabButton Pasteurization model.activeTab t.tabs.pasteurization
+                , tabButton RapidChilling model.activeTab t.tabs.rapidChilling
                 , tabButton ShelfLife model.activeTab t.tabs.shelfLife
                 ]
             ]
@@ -542,7 +386,7 @@ tabButton tab currentTab label =
             tab == currentTab
 
         baseClasses =
-            "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200"
+            "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 no-underline"
 
         stateClasses =
             if isActive then
@@ -550,9 +394,10 @@ tabButton tab currentTab label =
             else
                 "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
     in
-    button
-        [ onClick (SelectTab tab)
-        , class (baseClasses ++ " " ++ stateClasses)
+    a
+        [ href ("#" ++ tabToHash tab)
+        , onClick (SelectTab tab)
+        , class (baseClasses ++ " " ++ stateClasses ++ " cursor-pointer")
         , attribute "role" "tab"
         , attribute "aria-selected" (if isActive then "true" else "false")
         ]
@@ -563,6 +408,15 @@ viewContent : Data -> Translations -> Model -> Html Msg
 viewContent data t model =
     main_ [ class "flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8" ]
         [ case model.activeTab of
+            Introduction ->
+                Introduction.view t.introduction
+
+            BrineMarinade ->
+                Html.map BrineMarinadeMsg (Calculators.BrineMarinade.view data.brine t.brine model.brineMarinade)
+
+            Doneness ->
+                Html.map DonenessMsg (Calculators.Doneness.view data.doneness t.doneness model.doneness)
+
             Heating ->
                 Html.map HeatingMsg (Calculators.Heating.view data.heating t.heating t.app model.heating)
 
@@ -571,12 +425,6 @@ viewContent data t model =
 
             RapidChilling ->
                 Html.map RapidChillingMsg (Calculators.RapidChilling.view data.rapidChilling t.rapidChilling t.heating t.app model.rapidChilling)
-
-            BrineMarinade ->
-                Html.map BrineMarinadeMsg (Calculators.BrineMarinade.view data.brine t.brine model.brineMarinade)
-
-            Doneness ->
-                Html.map DonenessMsg (Calculators.Doneness.view data.doneness t.doneness model.doneness)
 
             ShelfLife ->
                 Html.map ShelfLifeMsg (Calculators.ShelfLife.view data.shelfLife t.shelfLife t.app model.shelfLife)

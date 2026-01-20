@@ -72,6 +72,7 @@ view data t model =
     div [ class "max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm" ]
         [ h2 [ class "text-2xl font-bold mb-6 text-gray-800 border-b pb-2" ]
             [ text t.title ]
+        , p [ class "text-gray-600 mb-6 italic" ] [ text t.explanation ]
         
         , div [ class "mb-8" ]
             [ viewProteinSelector t model.protein

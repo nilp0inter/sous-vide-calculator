@@ -7,6 +7,7 @@
     "max": "Maks"
   },
   "tabs": {
+    "introduction": "Johdanto",
     "pasteurization": "Pastörointi",
     "heating": "Kuumennusaika",
     "rapidChilling": "Pikajäähdytys",
@@ -14,8 +15,25 @@
     "doneness": "Kypsyysaste",
     "shelfLife": "Säilyvyys"
   },
+  "introduction": {
+    "title": "Johdatus Sous Videen",
+    "whatIsTitle": "Mitä on Sous Vide?",
+    "whatIsBody": "Sous vide on menetelmä, jossa ruoka kypsennetään tyhjiöpakatuissa muovipusseissa tarkasti säädetyissä lämpötiloissa. Tämä mahdollistaa tasaiset tulokset, paremman makujen säilymisen ja kyvyn kypsentää sitkeät lihapalat mureiksi ilman ylikypsentämistä.",
+    "threeStagesTitle": "Perustekniikan vaiheet ja työkalut",
+    "stage1Title": "1. Valmistelu pakkaamista varten",
+    "stage1Body": "Maustaminen voi olla haastavaa. Käytä [brine|Suolavesi- ja marinadisuhdetyökalua] laskeaksesi tarkat suolan ja sokerin määrät optimaaliseen kosteuden säilyttämiseen. Vältä raakaa valkosipulia (käytä jauhetta) ja ekstra-neitsytoliiviöljyä pitkissä kypsennyksissä.",
+    "stage2Title": "2. Kypsennys",
+    "stage2Body": "Kypsennys tapahtuu vesihauteessa. Valitse tavoitelämpötila [doneness|Kypsyys- ja rakennevisualisoijan] avulla. Varmista [heating|Kuumennusaikalaskimella], että ruoka saavuttaa kyseisen lämpötilan. Turvallisuuden vuoksi, erityisesti pitkissä kypsennyksissä tai riskiryhmille, käytä [pasteurization|Pastörointilaskinta].",
+    "stage3Title": "3. Viimeistely",
+    "stage3Body": "Koska sous vide -ruoka näyttää pussista otettaessa haudutetulta, se yleensä viimeistellään paistamalla pinta. Käytä erittäin kuumaa pannua ja savuavaa öljyä tai kaasupoltinta luodaksesi maukkaan paistopinnan (Maillard-reaktio) ylikypsentämättä sisusta.",
+    "stage4Title": "4. Jäähdytys ja säilytys (Cook-Chill)",
+    "stage4Body": "Jos ruokaa ei tarjoilla heti, nopea jäähdytys on välttämätöntä itiöiden kasvun estämiseksi. Määritä jääkylvyn kesto [chilling|Pikajäähdytyslaskimen] avulla. Käytä [shelf-life|Säilyvyys- ja varastointiajastinta] tietääksesi, kuinka kauan pastöroitu ruoka säilyy turvallisena jääkaapissa.",
+    "safetyNoteTitle": "Huomautus turvallisuudesta",
+    "safetyNoteBody": "Sous viden elintarviketurvallisuus riippuu sekä lämpötilasta että ajasta. Tämä sovellus käyttää tri Douglas Baldwinin matemaattisia malleja laskemaan vähimmäisajat, jotka tarvitaan taudinaiheuttajien vähentämiseksi turvalliselle tasolle."
+  },
   "heating": {
     "title": "Kuumennusaikalaskin",
+    "explanation": "Arvioi, kuinka kauan ruoan keskiosan saavuttaminen vesihauteen lämpötilaan kestää. Hyödyllinen varmistamaan, että ruoka lämpenee läpi ilman, että sitä välttämättä pastöroidaan.",
     "startState": "Alkutila",
     "thawed": "Sula / Tuore",
     "frozen": "Jäädytetty",
@@ -33,6 +51,7 @@
   },
   "pasteurization": {
     "title": "Pastörointilaskin",
+    "explanation": "Laskee vähimmäisajan, joka tarvitaan taudinaiheuttajien (Salmonella, Listeria, E. coli) vähentämiseen turvalliselle tasolle proteiinityypin, paksuuden ja lämpötilan perusteella.",
     "protein": "Proteiinityyppi",
     "meat": "Liha (Nauta/Sika/Lammas)",
     "poultry": "Siipikarja",
@@ -49,6 +68,7 @@
   },
   "rapidChilling": {
     "title": "Pikajäähdytyslaskin (Cook-Chill)",
+    "explanation": "Määrittää tarvittavan ajan suljetun ruoan jäähdyttämiseen jääkylvyssä 5°C:een (41°F). Ratkaisevan tärkeää itiöiden kasvun estämiseksi, kun ruokaa säilytetään myöhempää käyttöä varten.",
     "shape": "Muoto",
     "thickness": "Paksuus",
     "resultHeader": "Jäähdytysaika",
@@ -57,6 +77,7 @@
   },
   "brine": {
     "title": "Suolavesi- ja marinadisuhdetyökalu",
+    "explanation": "Laskee tarkat suolan ja sokerin määrät optimaaliseen suolaukseen, mikä parantaa rakennetta ja kosteuden säilymistä tietyille proteiinityypeille.",
     "protein": "Proteiinityyppi",
     "porkPoultry": "Sika / Siipikarja",
     "brisket": "Rinnus (Brisket)",
@@ -71,6 +92,7 @@
   },
   "doneness": {
     "title": "Kypsyys- ja rakennevisualisoija",
+    "explanation": "Visualisoi, miten lämpötila vaikuttaa lihan ja kalan rakenteeseen ja kypsyyteen, auttaen sinua valitsemaan täydellisen tavoitelämpötilan.",
     "protein": "Proteiinityyppi",
     "meat": "Liha (Nauta/Lammas)",
     "fish": "Kala",
@@ -88,6 +110,7 @@
   },
   "shelfLife": {
     "title": "Säilyvyys- ja varastointiajastin",
+    "explanation": "Laskee pastöroidun, nopeasti jäähdytetyn ruoan turvallisen enimmäissäilytysajan jääkaapissa säilytyslämpötilan perusteella. Vaihtoehtoisesti ruoka voidaan pakastaa jopa vuodeksi.",
     "temp": "Jääkaapin lämpötila",
     "resultHeader": "Enimmäissäilytys",
     "suffix": "tässä lämpötilassa.",

@@ -7,6 +7,7 @@
     "max": "Max"
   },
   "tabs": {
+    "introduction": "Einführung",
     "pasteurization": "Pasteurisierung",
     "heating": "Aufwärmzeit",
     "rapidChilling": "Schnellkühlen",
@@ -14,8 +15,25 @@
     "doneness": "Garstufe",
     "shelfLife": "Haltbarkeit"
   },
+  "introduction": {
+    "title": "Einführung in Sous Vide",
+    "whatIsTitle": "Was ist Sous Vide?",
+    "whatIsBody": "Sous Vide ist eine Methode des Garens in vakuumversiegelten Kunststoffbeuteln bei präzise kontrollierten Temperaturen. Dies ermöglicht konsistente Ergebnisse, eine verbesserte Erhaltung der Aromen und die Fähigkeit, zähe Fleischstücke zu einer zarten Textur zu garen, ohne sie zu verkochen.",
+    "threeStagesTitle": "Phasen der Basistechnik & Tools",
+    "stage1Title": "1. Vorbereitung zum Verpacken",
+    "stage1Body": "Das Würzen kann knifflig sein. Verwenden Sie das [brine|Lake & Marinade Verhältnis-Tool], um die genauen Mengen an Salz und Zucker für eine optimale Feuchtigkeitshaltung zu berechnen. Vermeiden Sie rohen Knoblauch (verwenden Sie Pulver) und natives Olivenöl extra für lange Garzeiten.",
+    "stage2Title": "2. Garen",
+    "stage2Body": "Das Garen erfolgt in einem Wasserbad. Verwenden Sie den [doneness|Garstufen & Textur Visualisierer], um Ihre Zieltemperatur zu wählen. Verwenden Sie den [heating|Aufwärmzeit-Rechner], um sicherzustellen, dass die Lebensmittel diese Temperatur erreichen. Zur Sicherheit, insbesondere bei langen Garzeiten oder gefährdeten Personengruppen, verwenden Sie den [pasteurization|Pasteurisierungs-Rechner].",
+    "stage3Title": "3. Finish",
+    "stage3Body": "Da Sous Vide gegarte Lebensmittel nach dem Entnehmen aus dem Beutel wie pochiert aussehen, werden sie normalerweise durch Anbraten vollendet. Verwenden Sie eine sehr heiße Pfanne mit rauchendem Öl oder einen Gourmetbrenner, um eine schmackhafte Kruste (Maillard-Reaktion) zu erzeugen, ohne das Innere zu verkochen.",
+    "stage4Title": "4. Kühlen & Lagern (Cook-Chill)",
+    "stage4Body": "Wenn Sie nicht sofort servieren, ist schnelles Abkühlen wichtig, um das Auskeimen von Sporen zu verhindern. Verwenden Sie den [chilling|Schnellkühl-Rechner], um die Zeiten im Eisbad zu bestimmen. Verwenden Sie den [shelf-life|Haltbarkeits- & Lagerungs-Timer], um zu wissen, wie lange Ihre pasteurisierten Lebensmittel im Kühlschrank sicher bleiben.",
+    "safetyNoteTitle": "Ein Hinweis zur Sicherheit",
+    "safetyNoteBody": "Die Lebensmittelsicherheit bei Sous Vide hängt sowohl von der Temperatur als auch von der Zeit ab. Diese Anwendung verwendet die mathematischen Modelle von Dr. Douglas Baldwin, um die Mindestzeiten zu berechnen, die erforderlich sind, um Krankheitserreger auf ein sicheres Maß zu reduzieren."
+  },
   "heating": {
     "title": "Aufwärmzeit-Rechner",
+    "explanation": "Schätzt, wie lange es dauert, bis der Kern Ihrer Lebensmittel die Wasserbadtemperatur erreicht. Nützlich, um sicherzustellen, dass die Lebensmittel durcherhitzt sind, ohne sie unbedingt zu pasteurisieren.",
     "startState": "Ausgangszustand",
     "thawed": "Aufgetaut / Frisch",
     "frozen": "Gefroren",
@@ -33,6 +51,7 @@
   },
   "pasteurization": {
     "title": "Pasteurisierungs-Rechner",
+    "explanation": "Berechnet die Mindestzeit, die erforderlich ist, um Krankheitserreger (Salmonellen, Listerien, E. coli) basierend auf Proteinart, Dicke und Temperatur auf ein sicheres Maß zu reduzieren.",
     "protein": "Proteinart",
     "meat": "Fleisch (Rind/Schwein/Lamm)",
     "poultry": "Geflügel",
@@ -49,6 +68,7 @@
   },
   "rapidChilling": {
     "title": "Schnellkühl-Rechner (Cook-Chill)",
+    "explanation": "Bestimmt die erforderliche Zeit, um versiegelte Lebensmittel in einem Eisbad auf 5°C (41°F) abzukühlen. Entscheidend für die Verhinderung von Sporenbildung bei der Lagerung von Lebensmitteln für den späteren Gebrauch.",
     "shape": "Form",
     "thickness": "Dicke",
     "resultHeader": "Kühlzeit",
@@ -57,6 +77,7 @@
   },
   "brine": {
     "title": "Lake & Marinade Verhältnis-Tool",
+    "explanation": "Berechnet die genauen Mengen an Salz und Zucker, die für ein optimales Pökeln erforderlich sind, wodurch Textur und Feuchtigkeitsspeicherung für bestimmte Proteinarten verbessert werden.",
     "protein": "Proteinart",
     "porkPoultry": "Schwein / Geflügel",
     "brisket": "Rinderbrust (Brisket)",
@@ -66,11 +87,12 @@
     "weightInput": "Gewicht des Wassers/der Flüssigkeit",
     "resultHeader": "Benötigte Mengen",
     "salt": "Salz:",
-    "sugar": "Zucker:",
+    "sugar": "Sugar:",
     "error": "Geben Sie ein gültiges Flüssigkeitsgewicht ein..."
   },
   "doneness": {
     "title": "Garstufen & Textur Visualisierer",
+    "explanation": "Visualisiert, wie die Temperatur die Textur und den Gargrad von Fleisch und Fisch beeinflusst, und hilft Ihnen bei der Auswahl der perfekten Zieltemperatur.",
     "protein": "Proteinart",
     "meat": "Fleisch (Rind/Lamm)",
     "fish": "Fisch",
@@ -88,6 +110,7 @@
   },
   "shelfLife": {
     "title": "Haltbarkeits- & Lagerungs-Timer",
+    "explanation": "Berechnet die maximale sichere Lagerzeit im Kühlschrank für pasteurisierte, schnell abgekühlte Lebensmittel basierend auf der Lagertemperatur. Alternativ können Lebensmittel bis zu einem Jahr eingefroren werden.",
     "temp": "Kühlschranktemperatur",
     "resultHeader": "Maximale Lagerdauer",
     "suffix": "bei dieser Temperatur.",

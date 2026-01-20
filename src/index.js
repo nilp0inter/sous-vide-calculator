@@ -1,8 +1,14 @@
-import { Elm } from './Main.elm';
 import './style.css';
+import { Elm } from './Main.elm';
 
-const root = document.querySelector('#app');
-Elm.Main.init({
-  node: root,
-  flags: navigator.language
+const app = Elm.Main.init({
+  node: document.getElementById('app'),
+  flags: {
+    lang: navigator.language || 'en',
+    hash: window.location.hash
+  }
+});
+
+window.addEventListener('hashchange', () => {
+  app.ports.onHashChange.send(window.location.hash);
 });

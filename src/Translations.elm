@@ -1,10 +1,11 @@
 module Translations exposing (..)
 
-import Json.Decode as Decode exposing (Decoder, string, field, map2, map3, map4, map5, map6)
+import Json.Decode as Decode exposing (Decoder, string, field, map2, map3, map4, map5, map6, map7)
 
 type alias Translations =
     { app : AppStrings
     , tabs : TabsStrings
+    , introduction : IntroductionStrings
     , heating : HeatingStrings
     , pasteurization : PasteurizationStrings
     , rapidChilling : RapidChillingStrings
@@ -22,7 +23,8 @@ type alias AppStrings =
     }
 
 type alias TabsStrings =
-    { pasteurization : String
+    { introduction : String
+    , pasteurization : String
     , heating : String
     , rapidChilling : String
     , brine : String
@@ -30,8 +32,26 @@ type alias TabsStrings =
     , shelfLife : String
     }
 
+type alias IntroductionStrings =
+    { title : String
+    , whatIsTitle : String
+    , whatIsBody : String
+    , threeStagesTitle : String
+    , stage1Title : String
+    , stage1Body : String
+    , stage2Title : String
+    , stage2Body : String
+    , stage3Title : String
+    , stage3Body : String
+    , stage4Title : String
+    , stage4Body : String
+    , safetyNoteTitle : String
+    , safetyNoteBody : String
+    }
+
 type alias HeatingStrings =
     { title : String
+    , explanation : String
     , startState : String
     , thawed : String
     , frozen : String
@@ -50,6 +70,7 @@ type alias HeatingStrings =
 
 type alias PasteurizationStrings =
     { title : String
+    , explanation : String
     , protein : String
     , meat : String
     , poultry : String
@@ -67,6 +88,7 @@ type alias PasteurizationStrings =
 
 type alias RapidChillingStrings =
     { title : String
+    , explanation : String
     , shape : String
     , thickness : String
     , resultHeader : String
@@ -76,6 +98,7 @@ type alias RapidChillingStrings =
 
 type alias BrineStrings =
     { title : String
+    , explanation : String
     , protein : String
     , porkPoultry : String
     , brisket : String
@@ -91,6 +114,7 @@ type alias BrineStrings =
 
 type alias DonenessStrings =
     { title : String
+    , explanation : String
     , protein : String
     , meat : String
     , fish : String
@@ -118,6 +142,7 @@ type alias NameDesc =
 
 type alias ShelfLifeStrings =
     { title : String
+    , explanation : String
     , temp : String
     , resultHeader : String
     , suffix : String
@@ -128,15 +153,16 @@ type alias ShelfLifeStrings =
 
 translationsDecoder : Decoder Translations
 translationsDecoder =
-    Decode.map8 Translations
-        (field "app" appDecoder)
-        (field "tabs" tabsDecoder)
-        (field "heating" heatingDecoder)
-        (field "pasteurization" pasteurizationDecoder)
-        (field "rapidChilling" rapidChillingDecoder)
-        (field "brine" brineDecoder)
-        (field "doneness" donenessDecoder)
-        (field "shelfLife" shelfLifeDecoder)
+    Decode.succeed Translations
+        |> required "app" appDecoder
+        |> required "tabs" tabsDecoder
+        |> required "introduction" introductionDecoder
+        |> required "heating" heatingDecoder
+        |> required "pasteurization" pasteurizationDecoder
+        |> required "rapidChilling" rapidChillingDecoder
+        |> required "brine" brineDecoder
+        |> required "doneness" donenessDecoder
+        |> required "shelfLife" shelfLifeDecoder
 
 appDecoder : Decoder AppStrings
 appDecoder =
@@ -149,7 +175,8 @@ appDecoder =
 
 tabsDecoder : Decoder TabsStrings
 tabsDecoder =
-    map6 TabsStrings
+    map7 TabsStrings
+        (field "introduction" string)
         (field "pasteurization" string)
         (field "heating" string)
         (field "rapidChilling" string)
@@ -157,10 +184,29 @@ tabsDecoder =
         (field "doneness" string)
         (field "shelfLife" string)
 
+introductionDecoder : Decoder IntroductionStrings
+introductionDecoder =
+    Decode.succeed IntroductionStrings
+        |> required "title" string
+        |> required "whatIsTitle" string
+        |> required "whatIsBody" string
+        |> required "threeStagesTitle" string
+        |> required "stage1Title" string
+        |> required "stage1Body" string
+        |> required "stage2Title" string
+        |> required "stage2Body" string
+        |> required "stage3Title" string
+        |> required "stage3Body" string
+        |> required "stage4Title" string
+        |> required "stage4Body" string
+        |> required "safetyNoteTitle" string
+        |> required "safetyNoteBody" string
+
 heatingDecoder : Decoder HeatingStrings
 heatingDecoder =
     Decode.succeed HeatingStrings
         |> required "title" string
+        |> required "explanation" string
         |> required "startState" string
         |> required "thawed" string
         |> required "frozen" string
@@ -180,6 +226,7 @@ pasteurizationDecoder : Decoder PasteurizationStrings
 pasteurizationDecoder =
     Decode.succeed PasteurizationStrings
         |> required "title" string
+        |> required "explanation" string
         |> required "protein" string
         |> required "meat" string
         |> required "poultry" string
@@ -196,18 +243,20 @@ pasteurizationDecoder =
 
 rapidChillingDecoder : Decoder RapidChillingStrings
 rapidChillingDecoder =
-    map6 RapidChillingStrings
-        (field "title" string)
-        (field "shape" string)
-        (field "thickness" string)
-        (field "resultHeader" string)
-        (field "resultSuffix" string)
-        (field "errorThickness" string)
+    Decode.succeed RapidChillingStrings
+        |> required "title" string
+        |> required "explanation" string
+        |> required "shape" string
+        |> required "thickness" string
+        |> required "resultHeader" string
+        |> required "resultSuffix" string
+        |> required "errorThickness" string
 
 brineDecoder : Decoder BrineStrings
 brineDecoder =
     Decode.succeed BrineStrings
         |> required "title" string
+        |> required "explanation" string
         |> required "protein" string
         |> required "porkPoultry" string
         |> required "brisket" string
@@ -222,13 +271,14 @@ brineDecoder =
 
 donenessDecoder : Decoder DonenessStrings
 donenessDecoder =
-    map6 DonenessStrings
-        (field "title" string)
-        (field "protein" string)
-        (field "meat" string)
-        (field "fish" string)
-        (field "beef" donenessBeefDecoder)
-        (field "fishDesc" donenessFishDecoder)
+    Decode.succeed DonenessStrings
+        |> required "title" string
+        |> required "explanation" string
+        |> required "protein" string
+        |> required "meat" string
+        |> required "fish" string
+        |> required "beef" donenessBeefDecoder
+        |> required "fishDesc" donenessFishDecoder
 
 donenessBeefDecoder : Decoder DonenessBeef
 donenessBeefDecoder =
@@ -253,12 +303,13 @@ nameDescDecoder =
 
 shelfLifeDecoder : Decoder ShelfLifeStrings
 shelfLifeDecoder =
-    map5 ShelfLifeStrings
-        (field "title" string)
-        (field "temp" string)
-        (field "resultHeader" string)
-        (field "suffix" string)
-        (field "error" string)
+    Decode.succeed ShelfLifeStrings
+        |> required "title" string
+        |> required "explanation" string
+        |> required "temp" string
+        |> required "resultHeader" string
+        |> required "suffix" string
+        |> required "error" string
 
 -- Helper for large records
 required : String -> Decoder a -> Decoder (a -> b) -> Decoder b

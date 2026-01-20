@@ -7,6 +7,7 @@
     "max": "Máx"
   },
   "tabs": {
+    "introduction": "Introdução",
     "pasteurization": "Pasteurização",
     "heating": "Tempo de Aquecimento",
     "rapidChilling": "Resfriamento Rápido",
@@ -14,8 +15,25 @@
     "doneness": "Ponto de Cozimento",
     "shelfLife": "Vida Útil"
   },
+  "introduction": {
+    "title": "Introdução ao Sous Vide",
+    "whatIsTitle": "O que é o Sous Vide?",
+    "whatIsBody": "Sous vide é um método de cozimento em embalagens plásticas seladas a vácuo em temperaturas controladas com precisão. Isso permite obter resultados consistentes, melhor retenção de sabor e a capacidade de cozinhar cortes de carne duros até obter uma textura macia sem cozinhar demais.",
+    "threeStagesTitle": "Etapas da Técnica Básica e Ferramentas",
+    "stage1Title": "1. Preparação para a Embalagem",
+    "stage1Body": "Temperar pode ser complicado. Use a [brine|Ferramenta de Proporção de Salmoura] para calcular as quantidades precisas de sal e açúcar para uma retenção ideal de umidade. Evite alho cru (use em pó) e azeite de oliva extra virgem para cozimentos longos.",
+    "stage2Title": "2. Cozimento",
+    "stage2Body": "O cozimento é feito em banho-maria. Use o [doneness|Visualizador de Ponto e Textura] para escolher sua temperatura alvo. Use a [heating|Calculadora de Tempo de Aquecimento] para garantir que o alimento atinja essa temperatura. Para segurança, especialmente em cozimentos longos ou populações vulneráveis, use a [pasteurization|Calculadora de Pasteurização].",
+    "stage3Title": "3. Finalização",
+    "stage3Body": "Como os alimentos cozidos no sous vide têm uma aparência de cozidos quando removidos do saco, geralmente são finalizados com selagem. Use uma frigideira muito quente com óleo fumegante ou um maçarico para criar uma crosta saborosa (reação de Maillard) sem cozinhar demais o interior.",
+    "stage4Title": "4. Resfriamento e Armazenamento (Cook-Chill)",
+    "stage4Body": "Se não for servir imediatamente, o resfriamento rápido é essencial para evitar o crescimento de esporos. Use a [chilling|Calculadora de Resfriamento Rápido] para determinar os tempos de banho de gelo. Use o [shelf-life|Temporizador de Validade e Armazenamento] para saber por quanto tempo seu alimento pasteurizado permanece seguro na geladeira.",
+    "safetyNoteTitle": "Nota sobre Segurança",
+    "safetyNoteBody": "A segurança alimentar no sous vide depende tanto da temperatura quanto do tempo. Este aplicativo usa os modelos matemáticos do Dr. Douglas Baldwin para calcular os tempos mínimos necessários para reduzir patógenos a níveis seguros."
+  },
   "heating": {
     "title": "Calculadora de Tempo de Aquecimento",
+    "explanation": "Estima quanto tempo leva para o centro do alimento atingir a temperatura do banho-maria. Útil para garantir que o alimento seja aquecido por completo sem necessariamente pasteurizá-lo.",
     "startState": "Estado Inicial",
     "thawed": "Descongelado / Fresco",
     "frozen": "Congelado",
@@ -33,6 +51,7 @@
   },
   "pasteurization": {
     "title": "Calculadora de Pasteurização",
+    "explanation": "Calcula o tempo mínimo necessário para reduzir patógenos (Salmonella, Listeria, E. coli) a níveis seguros com base no tipo de proteína, espessura e temperatura.",
     "protein": "Tipo de Proteína",
     "meat": "Carne (Boi/Porco/Cordeiro)",
     "poultry": "Aves",
@@ -49,6 +68,7 @@
   },
   "rapidChilling": {
     "title": "Calculadora de Resfriamento Rápido (Cook-Chill)",
+    "explanation": "Determina o tempo necessário para resfriar alimentos selados em banho de gelo até 5°C (41°F). Crucial para evitar o crescimento de esporos ao armazenar alimentos para uso posterior.",
     "shape": "Formato",
     "thickness": "Espessura",
     "resultHeader": "Tempo de Resfriamento",
@@ -57,6 +77,7 @@
   },
   "brine": {
     "title": "Ferramenta de Proporção de Salmoura",
+    "explanation": "Calcula as quantidades exatas de sal e açúcar necessárias para uma salmoura ideal, melhorando a textura e a retenção de umidade para tipos específicos de proteína.",
     "protein": "Tipo de Proteína",
     "porkPoultry": "Porco / Aves",
     "brisket": "Peito Bovino (Brisket)",
@@ -71,6 +92,7 @@
   },
   "doneness": {
     "title": "Visualizador de Ponto e Textura",
+    "explanation": "Visualiza como a temperatura afeta a textura e o ponto de cozimento da carne e do peixe, ajudando você a escolher a temperatura alvo perfeita.",
     "protein": "Tipo de Proteína",
     "meat": "Carne (Boi/Cordeiro)",
     "fish": "Peixe",
@@ -88,6 +110,7 @@
   },
   "shelfLife": {
     "title": "Temporizador de Validade e Armazenamento",
+    "explanation": "Calcula o tempo máximo de armazenamento seguro na geladeira para alimentos pasteurizados e resfriados rapidamente com base na temperatura de armazenamento. Como alternativa, os alimentos podem ser congelados por até um ano.",
     "temp": "Temperatura da Geladeira",
     "resultHeader": "Armazenamento Máximo",
     "suffix": "nesta temperatura.",

@@ -7,6 +7,7 @@
     "max": "Max"
   },
   "tabs": {
+    "introduction": "Introduction",
     "pasteurization": "Pasteurization",
     "heating": "Heating Time",
     "rapidChilling": "Rapid Chilling",
@@ -14,8 +15,25 @@
     "doneness": "Doneness",
     "shelfLife": "Shelf Life"
   },
+  "introduction": {
+    "title": "Introduction to Sous Vide",
+    "whatIsTitle": "What is Sous Vide?",
+    "whatIsBody": "Sous vide is a method of cooking in vacuum sealed plastic pouches at precisely controlled temperatures. This allows for consistent results, enhanced flavor retention, and the ability to cook tough cuts of meat to a tender texture without overcooking.",
+    "threeStagesTitle": "Stages of Basic Technique & Tools",
+    "stage1Title": "1. Preparing for Packaging",
+    "stage1Body": "Seasoning can be tricky. Use the [brine|Brine & Marinade Ratio Tool] to calculate the precise salt and sugar amounts for optimal moisture retention. Avoid raw garlic (use powdered) and extra virgin olive oil for long cooks.",
+    "stage2Title": "2. Cooking",
+    "stage2Body": "Cooking is done in a water bath. Use the [doneness|Doneness & Texture Visualizer] to choose your target temperature. Use the [heating|Heating Time Calculator] to ensure the food reaches that temperature. For safety, especially with long cooks or vulnerable populations, use the [pasteurization|Pasteurization Calculator].",
+    "stage3Title": "3. Finishing",
+    "stage3Body": "Since sous vide food looks poached when removed from the bag, it is usually finished by searing. Use a very hot pan with smoking oil or a blowtorch to create a flavorful crust (Maillard reaction) without overcooking the interior.",
+    "stage4Title": "4. Chilling & Storage (Cook-Chill)",
+    "stage4Body": "If not serving immediately, rapid cooling is essential to prevent spore outgrowth. Use the [chilling|Rapid Chilling Calculator] to determine ice-bath times. Use the [shelf-life|Shelf-Life & Storage Timer] to know how long your pasteurized food stays safe in the fridge.",
+    "safetyNoteTitle": "A Note on Safety",
+    "safetyNoteBody": "Food safety in sous vide depends on both temperature and time. This application uses the mathematical models from Dr. Douglas Baldwin to calculate the minimum times required to reduce pathogens to safe levels."
+  },
   "heating": {
     "title": "Heating Time Calculator",
+    "explanation": "Estimates how long it takes for the center of your food to reach the water bath temperature. Useful for ensuring food is heated through without necessarily pasteurizing it.",
     "startState": "Starting State",
     "thawed": "Thawed / Fresh",
     "frozen": "Frozen",
@@ -33,6 +51,7 @@
   },
   "pasteurization": {
     "title": "Pasteurization Calculator",
+    "explanation": "Calculates the minimum time required to reduce pathogens (Salmonella, Listeria, E. coli) to safe levels based on protein type, thickness, and temperature.",
     "protein": "Protein Type",
     "meat": "Meat (Beef/Pork/Lamb)",
     "poultry": "Poultry",
@@ -49,6 +68,7 @@
   },
   "rapidChilling": {
     "title": "Rapid Chilling (Cook-Chill) Calculator",
+    "explanation": "Determines the required time to chill sealed food in an ice bath to 5°C (41°F). Crucial for preventing spore outgrowth when storing food for later use.",
     "shape": "Shape",
     "thickness": "Thickness",
     "resultHeader": "Cooling Time",
@@ -57,6 +77,7 @@
   },
   "brine": {
     "title": "Brine & Marinade Ratio Tool",
+    "explanation": "Calculates the exact amounts of salt and sugar needed for optimal brining, improving texture and moisture retention for specific protein types.",
     "protein": "Protein Type",
     "porkPoultry": "Pork / Poultry",
     "brisket": "Brisket",
@@ -71,6 +92,7 @@
   },
   "doneness": {
     "title": "Doneness & Texture Visualizer",
+    "explanation": "Visualizes how temperature affects the texture and doneness of meat and fish, helping you choose the perfect target temperature.",
     "protein": "Protein Type",
     "meat": "Meat (Beef/Lamb)",
     "fish": "Fish",
@@ -88,6 +110,7 @@
   },
   "shelfLife": {
     "title": "Shelf-Life & Storage Timer",
+    "explanation": "Calculates the maximum safe refrigerator storage time for pasteurized, rapidly chilled food based on storage temperature. Alternatively, food can be frozen for up to a year.",
     "temp": "Refrigerator Temperature",
     "resultHeader": "Maximum Storage",
     "suffix": "at this temperature.",
